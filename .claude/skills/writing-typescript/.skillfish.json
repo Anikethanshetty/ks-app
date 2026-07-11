@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "writing-typescript",
+  "owner": "alexei-led",
+  "repo": "cc-thingz",
+  "path": "dist/claude/plugins/programming/skills/writing-typescript",
+  "branch": "master",
+  "sha": "e378d15622d8ba35cc4436e41187c662243c4d18",
+  "source": "manual"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "kss",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Krishnappa Shetty and Son's — Home Delivery App (monorepo)",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.11.0",
+  "scripts": {
+    "dev": "pnpm --filter api dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

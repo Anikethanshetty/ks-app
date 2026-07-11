@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Krishnappa Shetty and Son's",
+    "slug": "kss",
+    "scheme": "kss",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0F3A32",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.kss.mobile",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Speak your grocery order instead of typing it.",
+        "NSLocationWhenInUseUsageDescription": "Used to show your delivery address on the map."
+      }
+    },
+    "android": {
+      "package": "app.kss.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F3A32"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font"
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: kss-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kss
+      POSTGRES_PASSWORD: kss
+      POSTGRES_DB: kss
+    ports:
+      - "5432:5432"
+    volumes:
+      - kss-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kss -d kss"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    container_name: kss-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - kss-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  kss-pg:
+  kss-redis:
