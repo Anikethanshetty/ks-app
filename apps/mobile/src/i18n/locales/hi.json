@@ -35,11 +35,13 @@
   },
   "common": {
     "retry": "फिर से कोशिश करें",
+    "required": "यह फ़ील्ड आवश्यक है",
     "somethingWrong": "कुछ ग़लत हो गया।"
   },
   "admin": {
     "inventory": {
       "title": "इन्वेंटरी",
+      "addProduct": "+ जोड़ें",
       "tabAll": "सभी",
       "tabLowStock": "कम स्टॉक",
       "tabOutOfStock": "स्टॉक खत्म",
@@ -48,6 +50,38 @@
       "loading": "इन्वेंटरी लोड हो रही है…",
       "empty": "यहाँ अभी कोई उत्पाद नहीं है।",
       "error": "दुकान तक नहीं पहुँच पाए।"
+    },
+    "product": {
+      "addTitle": "उत्पाद जोड़ें",
+      "editTitle": "उत्पाद संपादित करें",
+      "nameEn": "नाम (अंग्रेज़ी)",
+      "nameKn": "नाम (कन्नड़)",
+      "nameHi": "नाम (हिंदी)",
+      "category": "श्रेणी",
+      "brand": "ब्रांड (वैकल्पिक)",
+      "imageUrl": "इमेज URL (वैकल्पिक)",
+      "variants": "वेरिएंट",
+      "addVariant": "वेरिएंट जोड़ें",
+      "sku": "SKU",
+      "packSize": "पैक आकार",
+      "unit": "इकाई",
+      "packLabel": "लेबल (जैसे 1 किग्रा)",
+      "mrpPaise": "MRP (₹)",
+      "costPricePaise": "लागत मूल्य (₹)",
+      "sellingPricePaise": "विक्रय मूल्य (₹)",
+      "stock": "स्टॉक",
+      "lowStockThreshold": "कम स्टॉक सतर्कता",
+      "isAvailable": "ऑर्डर के लिए उपलब्ध",
+      "isActive": "सक्रिय",
+      "save": "उत्पाद सहेजें",
+      "saving": "सहेजा जा रहा है…",
+      "saveSuccess": "उत्पाद सहेज लिया गया।",
+      "saveError": "उत्पाद सहेजा नहीं जा सका।",
+      "loading": "उत्पाद लोड हो रहा है…",
+      "skuExists": "यह SKU पहले से मौजूद है।",
+      "selectCategory": "श्रेणी चुनें",
+      "deleteVariant": "वेरिएंट हटाएँ",
+      "noVariants": "कम से कम एक वेरिएंट जोड़ें।"
     }
   }
 }

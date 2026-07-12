@@ -17,14 +17,20 @@ UI/UX brief, backend-schema, implementation-plan). Build order = implementation-
 | T0.5 | Role routing in app — `SessionProvider` (`src/lib/session.tsx`) bootstraps language + user (restores via SecureStore refresh → `/me` auto-refresh on cold-start 401), root-layout route guard (`app/_layout.tsx`) routes: no language → picker, signed-out → login, no `fullName` → onboarding, else role home. Real screens `(auth)/{language,login,otp,onboarding}` against the live API; shared `components/ui.tsx` + `LanguagePicker`. i18next kn/hi/en (`src/i18n/`, device-locale default) + first-launch picker persisted in AsyncStorage. Sign-out wired into the 3 role homes. **Verified**: `rtk tsc` clean, `expo export --platform ios` bundles the full graph clean. |
 | T1.1 | Admin inventory list (A05) — `GET /admin/inventory?tab=all\|low_stock\|out_of_stock&page&pageSize`, raw-SQL repository (Prisma can't compare `stock` to `low_stock_threshold` columns directly) + tab counts, admin-only. `(admin)/index.tsx`: tabbed list via `useInfiniteQuery`, 15s poll standing in for realtime until the Socket.IO gateway lands (T2.6). Added `@tanstack/react-query` + `QueryClientProvider` to the mobile stack (first data screen). Dev-only 300-variant synthetic catalogue in `seed.ts` (guarded `NODE_ENV !== production`, real catalogue is Phase 8 via CSV import T1.5) — verified end-to-end with curl (300/20/10 across all/low/out tabs). New `/admin/*` authz tests fill in the T0.6 `it.todo`. **Not verified**: actual on-device/simulator render (only `expo export --platform web` bundle + typecheck) — no login flow driven in a browser/emulator this session. |
 
-Backend Phase 0 complete. **Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). Phase 1: T1.1 done, uncommitted.
+**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, uncommitted.
 
 ## Next
 
-**Phase 1 — Catalogue + admin inventory** (`06-implementation-plan.md`): T1.2
-(product add/edit + kn/hi/en names), T1.3 (⭐ alias editor), T1.4 (stock
-adjust sheet), T1.5 (CSV import), T1.6 (customer catalogue + search). Then
-Phase 2 (manual ordering), etc.
+**Phase 1 — Catalogue + admin inventory** (`06-implementation-plan.md`), next up:
+- **T1.3** — ⭐ Alias editor (A06): chip input on the product edit screen,
+  "What do customers call this?", `POST/DELETE /admin/products/:id/aliases`,
+  writes to `product_aliases`. Give this screen visual prominence; it's what
+  makes voice work.
+- T1.4 (stock adjust sheet, writes `inventory_movement` via `adjust_stock()`),
+- T1.5 (CSV import, PapaParse),
+- T1.6 (customer catalogue + `GET /search` via pg_trgm).
+
+Then Phase 2 (manual ordering), etc.
 
 Left for T0.5 (needs a device/emulator, not blocking): drive the 3 dev numbers
 (`+919000000010/20/30`, dev OTP `000000`) → 3 home screens and confirm force-quit
@@ -72,5 +78,9 @@ on a device here.
   eslint-config-expo/flat`) — the flat config isn't resolving under the hoisted
   linker. Typecheck (`pnpm -r typecheck`) is the working gate meanwhile.
 - Verify mobile bundles with `pnpm --filter mobile exec expo export --platform ios`
-  (native path). `--platform web` fails on a nativewind `global.css` cache — web
-  isn't a target; ignore it.
+  (native path) or `--platform web -c` (web, `-c` clears the nativewind
+  `global.css` cache — without it the export can fail stale). Web isn't a
+  target platform; only used here as a fast bundler smoke test.
+- No login flow has been driven through an actual UI (browser/emulator) yet —
+  screens are verified by typecheck + clean bundle export + curl against the
+  API only. Worth doing a real device/emulator pass before Phase 1 ships.

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import type { InventoryTab, InventoryVariantDto } from "@kss/shared";
@@ -56,7 +57,7 @@ function InventoryRow({ variant }: { variant: InventoryVariantDto }) {
   );
 }
 
-/** A05 Inventory list — read-only for T1.1. Adjust/edit land in T1.2/T1.4. */
+/** A05 Inventory list — with navigation to product add/edit (A06). */
 export default function AdminInventoryScreen() {
   const { t } = useTranslation();
   const [tab, setTab] = useState<InventoryTab>("all");
@@ -87,7 +88,14 @@ export default function AdminInventoryScreen() {
         <Text className="font-anek-semibold text-h1 text-enamel">
           {t("admin.inventory.title")}
         </Text>
-        <SignOutButton />
+        <View className="flex-row items-center gap-2">
+          <Link href="/admin/inventory/product/new" asChild>
+            <Pressable className="rounded-chip bg-brass-tint px-3 py-1.5">
+              <Text className="font-anek-medium text-caption text-enamel">{t("admin.inventory.addProduct")}</Text>
+            </Pressable>
+          </Link>
+          <SignOutButton />
+        </View>
       </View>
 
       <View className="flex-row gap-2 px-gutter py-3">
@@ -132,7 +140,13 @@ export default function AdminInventoryScreen() {
         <FlatList
           data={items}
           keyExtractor={(v) => v.id}
-          renderItem={({ item }) => <InventoryRow variant={item} />}
+          renderItem={({ item }) => (
+            <Link href={`/admin/inventory/product/${item.productId}`} asChild>
+              <Pressable>
+                <InventoryRow variant={item} />
+              </Pressable>
+            </Link>
+          )}
           onEndReached={() => {
             if (query.hasNextPage && !query.isFetchingNextPage) query.fetchNextPage();
           }}

@@ -35,11 +35,13 @@
   },
   "common": {
     "retry": "Try again",
+    "required": "This field is required",
     "somethingWrong": "Something went wrong."
   },
   "admin": {
     "inventory": {
       "title": "Inventory",
+      "addProduct": "+ Add",
       "tabAll": "All",
       "tabLowStock": "Low stock",
       "tabOutOfStock": "Out of stock",
@@ -48,6 +50,38 @@
       "loading": "Loading inventory…",
       "empty": "No products here yet.",
       "error": "Couldn't reach the shop."
+    },
+    "product": {
+      "addTitle": "Add Product",
+      "editTitle": "Edit Product",
+      "nameEn": "Name (English)",
+      "nameKn": "Name (Kannada)",
+      "nameHi": "Name (Hindi)",
+      "category": "Category",
+      "brand": "Brand (optional)",
+      "imageUrl": "Image URL (optional)",
+      "variants": "Variants",
+      "addVariant": "Add variant",
+      "sku": "SKU",
+      "packSize": "Pack size",
+      "unit": "Unit",
+      "packLabel": "Label (e.g. 1 kg)",
+      "mrpPaise": "MRP (₹)",
+      "costPricePaise": "Cost price (₹)",
+      "sellingPricePaise": "Selling price (₹)",
+      "stock": "Stock",
+      "lowStockThreshold": "Low stock alert at",
+      "isAvailable": "Available for ordering",
+      "isActive": "Active",
+      "save": "Save Product",
+      "saving": "Saving…",
+      "saveSuccess": "Product saved.",
+      "saveError": "Couldn't save the product.",
+      "loading": "Loading product…",
+      "skuExists": "That SKU already exists.",
+      "selectCategory": "Select a category",
+      "deleteVariant": "Remove variant",
+      "noVariants": "Add at least one variant."
     }
   }
 }

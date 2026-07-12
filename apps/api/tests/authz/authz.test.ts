@@ -307,4 +307,254 @@ describe("authz — endpoints not yet built (fill in when they land)", () => {
   it.todo("A cannot GET B's invoice → 404");
   it.todo("D cannot collect-cod on an order that isn't theirs → 404");
   it.todo("A cannot fetch B's payment-proof (presigned, scoped, expiring)");
+  it.todo("A cannot GET B's products → 404");
+});
+
+describe("authz — admin products", () => {
+  it("admin can GET admin categories (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("customer cannot GET admin categories → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("delivery cannot GET admin categories → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("no token on admin products → 401", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+    });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("admin can create a product (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz Test Product",
+        nameKn: "ಆತ್ಜ್ ಟೆಸ್ಟ್ ಉತ್ಪನ್ನ",
+        nameHi: "ऑथज़ टेस्ट उत्पाद",
+        variants: [
+          {
+            sku: "SKU-AUTHZ-PROD",
+            packSize: 1,
+            unit: "kg",
+            packLabel: "1 kg",
+            mrpPaise: 10000,
+            sellingPricePaise: 8500,
+            stock: 100,
+            lowStockThreshold: 5,
+          },
+        ],
+      },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().nameEn).toBe("Authz Test Product");
+  });
+
+  it("customer cannot create a product → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(A.accessToken),
+      payload: {
+        categoryId: "00000000-0000-0000-0000-000000000000",
+        nameEn: "Should fail",
+        nameKn: "ವಿಫಲ",
+        nameHi: "विफल",
+      },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("delivery cannot create a product → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(D.accessToken),
+      payload: {
+        categoryId: "00000000-0000-0000-0000-000000000000",
+        nameEn: "Should fail",
+        nameKn: "ವಿಫಲ",
+        nameHi: "विफल",
+      },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("admin can GET a product by id (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const created = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz Get Test",
+        nameKn: "ಆತ್ಜ್ ಗೆಟ್ ಟೆಸ್ಟ್",
+        nameHi: "ऑथज़ गेट टेस्ट",
+        variants: [
+          {
+            sku: "SKU-AUTHZ-GET",
+            packSize: 1,
+            unit: "piece",
+            packLabel: "1 pc",
+            mrpPaise: 5000,
+            sellingPricePaise: 4000,
+            stock: 10,
+            lowStockThreshold: 3,
+          },
+        ],
+      },
+    });
+    expect(created.statusCode).toBe(200);
+    const productId = created.json().id;
+
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/products/${productId}`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().id).toBe(productId);
+  });
+
+  it("customer cannot GET admin product → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/products/${aOrderId}`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("admin can PATCH a product (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const created = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz Patch Test",
+        nameKn: "ಆತ್ಜ್ ಪ್ಯಾಚ್ ಟೆಸ್ಟ್",
+        nameHi: "ऑथज़ पैच टेस्ट",
+        variants: [
+          {
+            sku: "SKU-AUTHZ-PATCH",
+            packSize: 1,
+            unit: "piece",
+            packLabel: "1 pc",
+            mrpPaise: 10000,
+            sellingPricePaise: 8000,
+            stock: 10,
+            lowStockThreshold: 5,
+          },
+        ],
+      },
+    });
+    const productId = created.json().id;
+
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/admin/products/${productId}`,
+      headers: auth(ADMIN.accessToken),
+      payload: { nameEn: "Authz Patch Updated" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().nameEn).toBe("Authz Patch Updated");
+  });
+
+  it("customer cannot PATCH a product → 403", async () => {
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/admin/products/${aOrderId}`,
+      headers: auth(A.accessToken),
+      payload: { nameEn: "Should fail" },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("admin can add a variant (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const created = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz Variant Test",
+        nameKn: "ಆತ್ಜ್ ವೇರಿಯಂಟ್ ಟೆಸ್ಟ್",
+        nameHi: "ऑथज़ वेरिएंट टेस्ट",
+      },
+    });
+    expect(created.statusCode).toBe(200);
+    const productId = created.json().id;
+
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products/${productId}/variants`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        sku: "SKU-AUTHZ-VAR",
+        packSize: 2,
+        unit: "kg",
+        packLabel: "2 kg",
+        mrpPaise: 20000,
+        sellingPricePaise: 18000,
+        stock: 50,
+        lowStockThreshold: 10,
+      },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().variants).toHaveLength(1);
+    expect(res.json().variants[0].sku).toBe("SKU-AUTHZ-VAR");
+  });
 });

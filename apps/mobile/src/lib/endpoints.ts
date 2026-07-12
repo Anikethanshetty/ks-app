@@ -1,12 +1,19 @@
+import { z } from "zod";
 import {
   AuthTokens,
+  CategoryDto,
+  CreateProductBody,
+  CreateVariantBody,
   HealthResponse,
   InventoryListResponse,
   InventoryTab,
   MePatchBody,
   OkResponse,
   OtpRequestResponse,
+  ProductDto,
   PublicUser,
+  UpdateProductBody,
+  UpdateVariantBody,
 } from "@kss/shared";
 import { apiFetch } from "./api";
 import { API_ORIGIN } from "./config";
@@ -65,5 +72,39 @@ export const inventoryApi = {
   list: (tab: InventoryTab, page: number, pageSize = 50) =>
     apiFetch(`/admin/inventory?tab=${tab}&page=${page}&pageSize=${pageSize}`, {
       schema: InventoryListResponse,
+    }),
+};
+
+export const productApi = {
+  listCategories: () => apiFetch("/admin/categories", { schema: z.object({ items: z.array(CategoryDto) }) }),
+
+  get: (id: string) => apiFetch(`/admin/products/${id}`, { schema: ProductDto }),
+
+  create: (body: z.infer<typeof CreateProductBody> & { variants?: z.infer<typeof CreateVariantBody>[] }) =>
+    apiFetch("/admin/products", {
+      method: "POST",
+      body,
+      schema: ProductDto,
+    }),
+
+  update: (id: string, body: z.infer<typeof UpdateProductBody>) =>
+    apiFetch(`/admin/products/${id}`, {
+      method: "PATCH",
+      body,
+      schema: ProductDto,
+    }),
+
+  addVariant: (productId: string, body: z.infer<typeof CreateVariantBody>) =>
+    apiFetch(`/admin/products/${productId}/variants`, {
+      method: "POST",
+      body,
+      schema: ProductDto,
+    }),
+
+  updateVariant: (productId: string, variantId: string, body: z.infer<typeof UpdateVariantBody>) =>
+    apiFetch(`/admin/products/${productId}/variants/${variantId}`, {
+      method: "PATCH",
+      body,
+      schema: ProductDto,
     }),
 };
