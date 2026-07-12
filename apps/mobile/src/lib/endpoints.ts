@@ -4,6 +4,8 @@ import {
   AdjustStockResponse,
   AliasDto,
   AuthTokens,
+  CartDto,
+  CartCountDto,
   CatalogueCategoryDto,
   CatalogueProductListResponse,
   CategoriesResponse,
@@ -110,6 +112,32 @@ export const inventoryApi = {
 };
 
 /** Customer catalogue endpoints (T1.6). Accessible to any authenticated role. */
+export const cartApi = {
+  getCart: () => apiFetch("/cart", { schema: CartDto }),
+
+  getCartCount: () => apiFetch("/cart/count", { schema: CartCountDto }),
+
+  addToCart: (variantId: string, quantity: number) =>
+    apiFetch("/cart/add", {
+      method: "POST",
+      body: { variantId, quantity },
+      schema: CartDto,
+    }),
+
+  updateCartItem: (itemId: string, quantity: number) =>
+    apiFetch(`/cart/${itemId}`, {
+      method: "PATCH",
+      body: { quantity },
+      schema: CartDto,
+    }),
+
+  removeCartItem: (itemId: string) =>
+    apiFetch(`/cart/${itemId}`, {
+      method: "DELETE",
+      schema: CartDto,
+    }),
+};
+
 export const catalogueApi = {
   listCategories: () =>
     apiFetch("/categories", { schema: CategoriesResponse }),

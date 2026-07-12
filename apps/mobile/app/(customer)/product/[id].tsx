@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import type { CatalogueVariantDto } from "@kss/shared";
 import { catalogueApi } from "@/lib/endpoints";
+import { useCartStore } from "@/lib/cartStore";
 
 function formatRupees(paise: number): string {
   return `₹${(paise / 100).toFixed(2)}`;
@@ -76,6 +77,8 @@ export default function CustomerProductDetailScreen() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const addItem = useCartStore((s) => s.addItem);
+  const cartLoading = useCartStore((s) => s.loading);
 
   const query = useQuery({
     queryKey: ["customer", "product", id],
@@ -221,12 +224,19 @@ export default function CustomerProductDetailScreen() {
       <View className="border-t border-ruled bg-surface px-gutter py-4">
         <Pressable
           className="items-center rounded-chip bg-enamel py-3 active:opacity-80 disabled:opacity-50"
-          disabled={!selectedVariant || selectedVariant.stock <= 0 || !product.isAvailable}
+          disabled={!selectedVariant || selectedVariant.stock <= 0 || !product.isAvailable || cartLoading}
+          onPress={() => {
+            if (selectedVariant) {
+              addItem(selectedVariant.id, 1);
+            }
+          }}
         >
           <Text className="font-anek-semibold text-body text-paper">
             {selectedVariant && selectedVariant.stock <= 0
               ? t("customer.products.outOfStock")
-              : t("customer.products.addToCart")}
+              : cartLoading
+                ? "…"
+                : t("customer.products.addToCart")}
           </Text>
         </Pressable>
       </View>

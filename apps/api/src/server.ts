@@ -22,6 +22,7 @@ import { orderRoutes } from "./routes/order.routes.js";
 import { inventoryRoutes } from "./routes/inventory.routes.js";
 import { productRoutes } from "./routes/product.routes.js";
 import { catalogueRoutes } from "./routes/catalogue.routes.js";
+import { cartRoutes } from "./routes/cart.routes.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -71,6 +72,7 @@ export async function buildServer() {
       await v1.register(inventoryRoutes);
       await v1.register(productRoutes);
       await v1.register(catalogueRoutes);
+      await v1.register(cartRoutes);
     },
     { prefix: "/api/v1" },
   );

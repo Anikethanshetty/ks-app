@@ -889,6 +889,162 @@ CsvTest Dal,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಬೇಳೆ,सीएस�
     expect(res.statusCode).toBe(401);
   });
 
+  // ── Cart (T2.1) ──
+
+  it("A can add items to own cart (control)", async () => {
+    // Query the DB directly — don't depend on the catalogue API returning
+    // defaultVariant (which requires a LATERAL JOIN and matching products).
+    const variant = await prisma.productVariant.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: "asc" },
+    });
+    expect(variant).toBeDefined();
+
+    const added = await app.inject({
+      method: "POST",
+      url: `${V1}/cart/add`,
+      headers: auth(A.accessToken),
+      payload: { variantId: variant!.id, quantity: 2 },
+    });
+    expect(added.statusCode).toBe(200);
+    expect(added.json().itemCount).toBeGreaterThanOrEqual(1);
+  });
+
+  it("delivery cannot add to cart → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/cart/add`,
+      headers: auth(D.accessToken),
+      payload: {
+        variantId: "00000000-0000-0000-0000-000000000000",
+        quantity: 1,
+      },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("no token on cart → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/cart` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("A can GET own cart (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/cart`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.json().items)).toBe(true);
+  });
+
+  it("A can update cart item quantity (control)", async () => {
+    const cart = await app.inject({
+      method: "GET",
+      url: `${V1}/cart`,
+      headers: auth(A.accessToken),
+    });
+    const itemId = cart.json().items[0]?.id;
+    if (!itemId) return;
+
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/cart/${itemId}`,
+      headers: auth(A.accessToken),
+      payload: { quantity: 3 },
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  // Cross-customer isolation tests MUST run BEFORE the remove test so there
+  // is still an item in A's cart to test against.
+  it("B cannot update A's cart item → 404", async () => {
+    const cart = await app.inject({
+      method: "GET",
+      url: `${V1}/cart`,
+      headers: auth(A.accessToken),
+    });
+    const itemId = cart.json().items[0]?.id;
+    expect(itemId).toBeDefined(); // A must have items — the add test ran first
+
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/cart/${itemId}`,
+      headers: auth(B.accessToken),
+      payload: { quantity: 5 },
+    });
+    expect(res.statusCode).toBe(404);
+  });
+
+  it("B cannot delete A's cart item → 404", async () => {
+    const cart = await app.inject({
+      method: "GET",
+      url: `${V1}/cart`,
+      headers: auth(A.accessToken),
+    });
+    const itemId = cart.json().items[0]?.id;
+    expect(itemId).toBeDefined();
+
+    const res = await app.inject({
+      method: "DELETE",
+      url: `${V1}/cart/${itemId}`,
+      headers: auth(B.accessToken),
+    });
+    expect(res.statusCode).toBe(404);
+  });
+
+  it("A can remove cart item (control)", async () => {
+    const cart = await app.inject({
+      method: "GET",
+      url: `${V1}/cart`,
+      headers: auth(A.accessToken),
+    });
+    const itemId = cart.json().items[0]?.id;
+    if (!itemId) return;
+
+    const res = await app.inject({
+      method: "DELETE",
+      url: `${V1}/cart/${itemId}`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("admin can add to cart (control)", async () => {
+    const variant = await prisma.productVariant.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: "asc" },
+    });
+    expect(variant).toBeDefined();
+
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/cart/add`,
+      headers: auth(ADMIN.accessToken),
+      payload: { variantId: variant!.id, quantity: 1 },
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("admin can get own cart (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/cart`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("admin can get cart count (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/cart/count`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(typeof res.json().count).toBe("number");
+  });
+
   it("admin can add a variant (control)", async () => {
     const cats = await app.inject({
       method: "GET",

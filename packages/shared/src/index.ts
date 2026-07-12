@@ -7,3 +7,4 @@ export * from "./schemas/order.js";
 export * from "./schemas/inventory.js";
 export * from "./schemas/product.js";
 export * from "./schemas/catalogue.js";
+export * from "./schemas/cart.js";

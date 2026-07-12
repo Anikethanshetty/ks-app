@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import type { CatalogueCategoryDto } from "@kss/shared";
 import { catalogueApi } from "@/lib/endpoints";
+import { useCartStore } from "@/lib/cartStore";
 import { SignOutButton } from "@/components/SignOutButton";
 
 function CategoryCard({ category }: { category: CatalogueCategoryDto }) {
@@ -39,6 +40,14 @@ export default function CustomerHome() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
+  const itemCount = useCartStore((s) => s.itemCount);
+  const fetchCart = useCartStore((s) => s.fetchCart);
+
+  // Fetch cart on mount to hydrate the badge
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
+
   const categoriesQuery = useQuery({
     queryKey: ["customer", "categories"],
     queryFn: () => catalogueApi.listCategories(),
@@ -62,7 +71,21 @@ export default function CustomerHome() {
             {t("customer.home.subtitle")}
           </Text>
         </View>
-        <SignOutButton />
+        <View className="flex-row items-center gap-2">
+          <Link href="/customer/cart" asChild>
+            <Pressable className="relative">
+              <Text className="text-2xl">🛒</Text>
+              {itemCount > 0 && (
+                <View className="absolute -right-2 -top-1 h-5 min-w-[20px] items-center justify-center rounded-full bg-chilli px-1">
+                  <Text className="font-anek-semibold text-caption-xs text-paper">
+                    {itemCount > 99 ? "99+" : itemCount}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          </Link>
+          <SignOutButton />
+        </View>
       </View>
 
       {/* Search bar */}

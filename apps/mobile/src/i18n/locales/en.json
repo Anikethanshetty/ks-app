@@ -70,6 +70,20 @@
       "loading": "Searching…",
       "matchedAlias": "Also known as \"{{alias}}\"",
       "hint": "Try searching in Kannada, Hindi, or English"
+    },
+    "cart": {
+      "title": "Your Cart",
+      "empty": "Your cart is empty.",
+      "emptyHint": "Browse products and add items to get started.",
+      "loading": "Loading cart…",
+      "itemCount": "{{count}} item(s)",
+      "subtotal": "Subtotal",
+      "checkout": "Proceed to Checkout",
+      "remove": "Remove",
+      "updateQuantity": "Update quantity",
+      "added": "Added to cart",
+      "addError": "Couldn't add to cart.",
+      "removeError": "Couldn't remove item."
     }
   },
   "common": {
