@@ -33,6 +33,45 @@
     "saving": "Saving…",
     "nameRequired": "Please enter your name."
   },
+  "customer": {
+    "home": {
+      "title": "Krishnappa Shetty & Son's",
+      "subtitle": "Your neighbourhood grocery",
+      "browse": "Browse Products",
+      "recentOrders": "Recent Orders",
+      "search": "Search for products…",
+      "loading": "Loading…",
+      "error": "Couldn't reach the shop."
+    },
+    "categories": {
+      "title": "Shop by Category",
+      "products": "{{count}} products",
+      "loading": "Loading categories…",
+      "error": "Couldn't load categories."
+    },
+    "products": {
+      "title": "Products",
+      "noProducts": "No products in this category yet.",
+      "loading": "Loading products…",
+      "error": "Couldn't load products.",
+      "outOfStock": "Out of stock",
+      "addToCart": "Add to cart",
+      "variants": "Variants",
+      "price": "₹{{price}}",
+      "mrp": "MRP: ₹{{price}}",
+      "youSave": "Save ₹{{save}}"
+    },
+    "search": {
+      "title": "Search",
+      "placeholder": "Search for products…",
+      "noResults": "No products found for \"{{query}}\".",
+      "error": "Search failed. Try again.",
+      "resultsFor": "Results for \"{{query}}\"",
+      "loading": "Searching…",
+      "matchedAlias": "Also known as \"{{alias}}\"",
+      "hint": "Try searching in Kannada, Hindi, or English"
+    }
+  },
   "common": {
     "retry": "Try again",
     "required": "This field is required",

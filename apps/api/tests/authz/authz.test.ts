@@ -791,6 +791,104 @@ CsvTest Dal,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಬೇಳೆ,सीएस�
     expect(res.json().error.code).toBe("OUT_OF_STOCK");
   });
 
+  // ── Customer catalogue (T1.6) ──
+
+  it("any authenticated role can list categories (control)", async () => {
+    const adminRes = await app.inject({
+      method: "GET",
+      url: `${V1}/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(adminRes.statusCode).toBe(200);
+    expect(adminRes.json().items.length).toBeGreaterThanOrEqual(1);
+
+    const customerRes = await app.inject({
+      method: "GET",
+      url: `${V1}/categories`,
+      headers: auth(A.accessToken),
+    });
+    expect(customerRes.statusCode).toBe(200);
+
+    const deliveryRes = await app.inject({
+      method: "GET",
+      url: `${V1}/categories`,
+      headers: auth(D.accessToken),
+    });
+    expect(deliveryRes.statusCode).toBe(200);
+  });
+
+  it("unauthenticated request to catalogue → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/categories` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("any authenticated role can list products by category (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/products?categoryId=${categoryId}`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().items).toBeDefined();
+  });
+
+  it("any authenticated role can get product detail (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const products = await app.inject({
+      method: "GET",
+      url: `${V1}/products?categoryId=${categoryId}`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const productId = products.json().items[0]?.id;
+    if (!productId) return; // skip if no products
+
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/products/${productId}`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().id).toBe(productId);
+  });
+
+  it("product not found → 404", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/products/00000000-0000-0000-0000-000000000000`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(404);
+  });
+
+  it("any authenticated role can search products (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/search?q=rice&lang=en`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().query).toBe("rice");
+    expect(Array.isArray(res.json().items)).toBe(true);
+  });
+
+  it("unauthenticated request to search → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/search?q=rice` });
+    expect(res.statusCode).toBe(401);
+  });
+
   it("admin can add a variant (control)", async () => {
     const cats = await app.inject({
       method: "GET",

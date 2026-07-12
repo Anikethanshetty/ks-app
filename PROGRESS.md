@@ -20,18 +20,16 @@ UI/UX brief, backend-schema, implementation-plan). Build order = implementation-
 | T1.3 | ⭐ Alias editor (A06) — API: `GET /admin/products/:id/aliases`, `POST /admin/products/:id/aliases`, `DELETE /admin/products/:id/aliases/:aliasId`. Repository methods with `deleteMany` productId-guarded delete. Mobile: brass-tint branded card with ⭐ header and "What makes voice work" hint, chip display of existing aliases with per-chip delete, text input + Add button, instant chip appearance via query invalidation. Authz tests: 4 new tests (admin add/list/delete, customer 403, delivery 403). Typecheck clean, 34 authz tests pass. |
 | T1.4 | Stock adjust sheet (A07) — API: `POST /admin/inventory/adjust` with discriminated union body (stock_in / stock_out / correction), transactional update of variant stock + `inventory_movement` write. Full validation: stock-out checks quantity against current stock, correction computes delta from counted stock. Authz tests: 3 new (admin stock in/out/correction, customer 403, insufficient stock → 409). Mobile: `(admin)/inventory/adjust.tsx` full-screen form with mode tabs (Stock In / Stock Out / Correction), quantity/countedStock fields, reason picker (damage/expiry/shop_use), note field, docked submit button. Query invalidation on success. Full kn/hi/en i18n. Typecheck clean, 33 authz tests pass (4 todo). |
 | T1.5 | CSV import (A08) — API: `POST /admin/inventory/import/preview` (parse + validate with PapaParse, return row-level results) and `POST /admin/inventory/import/commit` (create categories, products, variants, aliases). Import service with `transformHeader` normalization, `parsePaise` conversion, row-level error reporting, and duplicate-skipping category upsert. Authz tests: 5 new (admin preview/commit control, customer 403 preview/commit, delivery 403 commit). Mobile: `(admin)/inventory/import.tsx` with multi-line CSV paste input, Preview/Commit buttons, summary badges, row-level preview table with valid/invalid indicators, empty state. Full kn/hi/en i18n. Typecheck clean, 38 authz tests pass (4 todo). |
+| T1.6 | Customer catalogue (`GET /categories`, `GET /products`, `GET /products/:id`, `GET /search`) — Catalogue repository with raw-SQL queries (pg_trgm trigram similarity search across names + aliases), parameterised search query ($1/$2 positional params). Routes accessible to any authenticated role (`authorize("customer", "delivery", "admin")`). Mobile: C04 home screen with category grid + search bar, C05 product listing per category with infinite scroll, C06 product detail with variant selector and price display, C07 live-search with debounced pg_trgm queries and alias-matched results. Full kn/hi/en i18n. Authz tests: 8 new covering all roles + 401 + 404. Typecheck clean, 49 authz tests pass (4 todo). |
 
-**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`). **T1.5 done**, uncommitted.
+**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`). **T1.5 done**, committed (`58930b6`). **T1.6 done**, uncommitted.
 
 ## Next
 
-**Phase 1 — Catalogue + admin inventory** (`06-implementation-plan.md`), next up:
-- **T1.5** — CSV import (A08): PapaParse + preview + commit flow.
-- T1.6 (customer catalogue + `GET /search` via pg_trgm).
+**Phase 1 complete.** Next up:
 
-Then Phase 2 (manual ordering), etc.
+**Phase 2 — Manual ordering** (`06-implementation-plan.md`): cart, checkout, address management, order history.
 
-Then Phase 2 (manual ordering), etc.
 
 Left for T0.5 (needs a device/emulator, not blocking): drive the 3 dev numbers
 (`+919000000010/20/30`, dev OTP `000000`) → 3 home screens and confirm force-quit

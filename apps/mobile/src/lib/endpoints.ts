@@ -4,6 +4,9 @@ import {
   AdjustStockResponse,
   AliasDto,
   AuthTokens,
+  CatalogueCategoryDto,
+  CatalogueProductListResponse,
+  CategoriesResponse,
   CategoryDto,
   CreateAliasBody,
   CreateProductBody,
@@ -16,8 +19,10 @@ import {
   MePatchBody,
   OkResponse,
   OtpRequestResponse,
+  ProductDetailDto,
   ProductDto,
   PublicUser,
+  SearchResponse,
   UpdateProductBody,
   UpdateVariantBody,
 } from "@kss/shared";
@@ -101,6 +106,25 @@ export const inventoryApi = {
       method: "POST",
       body: { csv },
       schema: ImportCommitResponse,
+    }),
+};
+
+/** Customer catalogue endpoints (T1.6). Accessible to any authenticated role. */
+export const catalogueApi = {
+  listCategories: () =>
+    apiFetch("/categories", { schema: CategoriesResponse }),
+
+  listProducts: (categoryId: string, page = 1, pageSize = 50) =>
+    apiFetch(`/products?categoryId=${categoryId}&page=${page}&pageSize=${pageSize}`, {
+      schema: CatalogueProductListResponse,
+    }),
+
+  getProduct: (id: string) =>
+    apiFetch(`/products/${id}`, { schema: ProductDetailDto }),
+
+  search: (q: string, lang = "kn", limit = 20) =>
+    apiFetch(`/search?q=${encodeURIComponent(q)}&lang=${lang}&limit=${limit}`, {
+      schema: SearchResponse,
     }),
 };
 
