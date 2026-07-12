@@ -585,6 +585,152 @@ describe("authz — admin products", () => {
     expect(res.statusCode).toBe(403);
   });
 
+  it("admin can adjust stock (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const created = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz Stock Test",
+        nameKn: "ಆತ್ಜ್ ಸ್ಟಾಕ್ ಟೆಸ್ಟ್",
+        nameHi: "ऑथज़ स्टॉक टेस्ट",
+        variants: [
+          {
+            sku: "SKU-AUTHZ-STOCK",
+            packSize: 1,
+            unit: "kg",
+            packLabel: "1 kg",
+            mrpPaise: 10000,
+            sellingPricePaise: 8500,
+            stock: 50,
+            lowStockThreshold: 5,
+          },
+        ],
+      },
+    });
+    const productId = created.json().id;
+    const variantId = created.json().variants[0].id;
+
+    // Stock in
+    const stockIn = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/adjust`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        type: "stock_in",
+        variantId,
+        quantity: 10,
+        note: "Test stock in",
+      },
+    });
+    expect(stockIn.statusCode).toBe(200);
+    expect(stockIn.json().delta).toBe(10);
+    expect(stockIn.json().newStock).toBe(60);
+
+    // Stock out
+    const stockOut = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/adjust`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        type: "stock_out",
+        variantId,
+        quantity: 5,
+        reason: "damage",
+        note: "Test stock out",
+      },
+    });
+    expect(stockOut.statusCode).toBe(200);
+    expect(stockOut.json().delta).toBe(-5);
+    expect(stockOut.json().newStock).toBe(55);
+
+    // Correction
+    const correction = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/adjust`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        type: "correction",
+        variantId,
+        countedStock: 40,
+        note: "Physical count",
+      },
+    });
+    expect(correction.statusCode).toBe(200);
+    expect(correction.json().delta).toBe(-15);
+    expect(correction.json().newStock).toBe(40);
+  });
+
+  it("customer cannot adjust stock → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/adjust`,
+      headers: auth(A.accessToken),
+      payload: {
+        type: "stock_in",
+        variantId: "00000000-0000-0000-0000-000000000000",
+        quantity: 10,
+      },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("stock out with insufficient stock → 409 OUT_OF_STOCK", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const created = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz OOS Test",
+        nameKn: "ಆತ್ಜ್ ಓಓಎಸ್ ಟೆಸ್ಟ್",
+        nameHi: "ऑथज़ ओओएस टेस्ट",
+        variants: [
+          {
+            sku: "SKU-AUTHZ-OOS",
+            packSize: 1,
+            unit: "piece",
+            packLabel: "1 pc",
+            mrpPaise: 1000,
+            sellingPricePaise: 900,
+            stock: 3,
+            lowStockThreshold: 5,
+          },
+        ],
+      },
+    });
+    const variantId = created.json().variants[0].id;
+
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/adjust`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        type: "stock_out",
+        variantId,
+        quantity: 10,
+        reason: "damage",
+      },
+    });
+    expect(res.statusCode).toBe(409);
+    expect(res.json().error.code).toBe("OUT_OF_STOCK");
+  });
+
   it("admin can add a variant (control)", async () => {
     const cats = await app.inject({
       method: "GET",

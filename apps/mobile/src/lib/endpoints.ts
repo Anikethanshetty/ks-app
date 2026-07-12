@@ -1,5 +1,7 @@
 import { z } from "zod";
 import {
+  AdjustStockBody,
+  AdjustStockResponse,
   AliasDto,
   AuthTokens,
   CategoryDto,
@@ -74,6 +76,14 @@ export const inventoryApi = {
   list: (tab: InventoryTab, page: number, pageSize = 50) =>
     apiFetch(`/admin/inventory?tab=${tab}&page=${page}&pageSize=${pageSize}`, {
       schema: InventoryListResponse,
+    }),
+
+  // ── Stock adjust (T1.4, A07) ──
+  adjustStock: (body: z.infer<typeof AdjustStockBody>) =>
+    apiFetch("/admin/inventory/adjust", {
+      method: "POST",
+      body,
+      schema: AdjustStockResponse,
     }),
 };
 

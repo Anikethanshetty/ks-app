@@ -1,9 +1,15 @@
 import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
-import { InventoryListResponse, InventoryTab } from "@kss/shared";
+import {
+  AdjustStockBody,
+  AdjustStockResponse,
+  InventoryListResponse,
+  InventoryTab,
+} from "@kss/shared";
 import { authenticate } from "../middleware/authenticate.js";
 import { authorize } from "../middleware/authorize.js";
 import { inventoryRepository } from "../repositories/inventory.repository.js";
+import { inventoryService } from "../services/inventory.service.js";
 import { toInventoryVariantDto } from "../lib/mappers.js";
 
 const ListQuery = z.object({
@@ -33,6 +39,23 @@ export const inventoryRoutes: FastifyPluginAsyncZod = async (app) => {
         inventoryRepository.counts(),
       ]);
       return { items: rows.map(toInventoryVariantDto), page, pageSize, counts };
+    },
+  );
+
+  // ── Stock adjust (T1.4, A07) ──
+  app.post(
+    "/admin/inventory/adjust",
+    {
+      preHandler: authorize("admin"),
+      schema: {
+        tags: ["admin", "inventory"],
+        summary: "Adjust stock: stock in / stock out / correction (A07)",
+        body: AdjustStockBody,
+        response: { 200: AdjustStockResponse },
+      },
+    },
+    async (req) => {
+      return inventoryService.adjustStock(req.actor!, req.body);
     },
   );
 };

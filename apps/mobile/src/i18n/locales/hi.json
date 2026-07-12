@@ -90,6 +90,27 @@
       "aliasAdded": "उपनाम जोड़ दिया गया।",
       "aliasRemoved": "उपनाम हटा दिया गया।",
       "loadingAliases": "उपनाम लोड हो रहे हैं…"
+    },
+    "stockAdjust": {
+      "title": "स्टॉक समायोजित करें",
+      "variant": "वेरिएंट",
+      "currentStock": "वर्तमान स्टॉक: {{count}}",
+      "stockIn": "स्टॉक जोड़ें",
+      "stockOut": "स्टॉक निकालें",
+      "correction": "सुधार",
+      "quantity": "मात्रा",
+      "countedStock": "गणना किया गया स्टॉक",
+      "reason": "कारण",
+      "reasonDamage": "क्षतिग्रस्त",
+      "reasonExpiry": "समाप्त",
+      "reasonShopUse": "दुकान उपयोग",
+      "note": "नोट (वैकल्पिक)",
+      "notePlaceholder": "स्टॉक क्यों समायोजित किया जा रहा है?",
+      "submit": "स्टॉक समायोजित करें",
+      "submitting": "समायोजित किया जा रहा है…",
+      "success": "स्टॉक समायोजित हो गया।",
+      "error": "स्टॉक समायोजित नहीं किया जा सका।",
+      "outOfStock": "निकालने के लिए पर्याप्त स्टॉक नहीं है।"
     }
   }
 }

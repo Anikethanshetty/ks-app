@@ -90,6 +90,27 @@
       "aliasAdded": "Alias added.",
       "aliasRemoved": "Alias removed.",
       "loadingAliases": "Loading aliases…"
+    },
+    "stockAdjust": {
+      "title": "Adjust Stock",
+      "variant": "Variant",
+      "currentStock": "Current stock: {{count}}",
+      "stockIn": "Stock In",
+      "stockOut": "Stock Out",
+      "correction": "Correction",
+      "quantity": "Quantity",
+      "countedStock": "Counted stock",
+      "reason": "Reason",
+      "reasonDamage": "Damaged",
+      "reasonExpiry": "Expired",
+      "reasonShopUse": "Shop use",
+      "note": "Note (optional)",
+      "notePlaceholder": "Why is this stock being adjusted?",
+      "submit": "Adjust Stock",
+      "submitting": "Adjusting…",
+      "success": "Stock adjusted.",
+      "error": "Couldn't adjust stock.",
+      "outOfStock": "Not enough stock to remove."
     }
   }
 }
