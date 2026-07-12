@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(git init *)",
-      "Bash(rtk git *)"
+      "Bash(rtk git *)",
+      "Bash(rtk find *)",
+      "Bash(rtk proxy *)",
+      "Bash(rtk grep *)",
+      "Bash(rtk read *)"
     ]
   }
 }

@@ -1,0 +1,40 @@
+{
+  "language": {
+    "title": "Choose your language",
+    "subtitle": "You can change this later.",
+    "continue": "Continue"
+  },
+  "login": {
+    "title": "Enter your phone number",
+    "subtitle": "We'll send you a one-time code.",
+    "phoneLabel": "Phone number",
+    "phonePlaceholder": "10-digit mobile number",
+    "sendOtp": "Send code",
+    "sending": "Sending…",
+    "invalidPhone": "Enter a valid 10-digit mobile number."
+  },
+  "otp": {
+    "title": "Enter the code",
+    "sentTo": "Sent to {{phone}}",
+    "codeLabel": "6-digit code",
+    "verify": "Verify",
+    "verifying": "Verifying…",
+    "resend": "Resend code",
+    "wrongCode": "That code is wrong or expired.",
+    "changeNumber": "Change number"
+  },
+  "onboarding": {
+    "title": "Welcome",
+    "subtitle": "Tell us your name so the shop knows you.",
+    "nameLabel": "Your name",
+    "namePlaceholder": "Full name",
+    "langLabel": "Preferred language",
+    "finish": "Finish",
+    "saving": "Saving…",
+    "nameRequired": "Please enter your name."
+  },
+  "common": {
+    "retry": "Try again",
+    "somethingWrong": "Something went wrong."
+  }
+}

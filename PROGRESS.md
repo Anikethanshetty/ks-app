@@ -14,19 +14,19 @@ UI/UX brief, backend-schema, implementation-plan). Build order = implementation-
 | T0.3 | Auth — OTP (bcrypt hash, Redis 5/h-phone + 20/h-IP, dev code `000000`), rotating JWTs (opaque refresh + sha256+pepper storage, family revoke on reuse), `authenticate`/`authorize` middleware, self-contained HS256 access token (15 min), `GET/PATCH /me`. |
 | T0.4 | Order service — `placeOrder` (one txn: `FOR UPDATE OF v` sorted, server prices, price/name snapshots, stock decrement + `sale` movements, cart clear, voice link, Redis idempotency) + `updateStatus` (transition table, role gate, `client_mutation_id` idempotency, stock restore on cancel/return) + `cancel`. 6 Testcontainers properties pass incl. **last-unit concurrency release gate**. |
 | T0.6 | Authz suite (`tests/authz/`) — 4 real clients via `app.inject`, TRD §9.2 assertions (10 pass, 4 `it.todo` for unbuilt endpoints). Release gate. |
+| T0.5 | Role routing in app — `SessionProvider` (`src/lib/session.tsx`) bootstraps language + user (restores via SecureStore refresh → `/me` auto-refresh on cold-start 401), root-layout route guard (`app/_layout.tsx`) routes: no language → picker, signed-out → login, no `fullName` → onboarding, else role home. Real screens `(auth)/{language,login,otp,onboarding}` against the live API; shared `components/ui.tsx` + `LanguagePicker`. i18next kn/hi/en (`src/i18n/`, device-locale default) + first-launch picker persisted in AsyncStorage. Sign-out wired into the 3 role homes. **Verified**: `rtk tsc` clean, `expo export --platform ios` bundles the full graph clean. |
 
-Backend Phase 0 complete except T0.5 (needs mobile). Git: initial commit `a5a3fd8`.
+Backend Phase 0 complete. **Phase 0 done** (T0.1–T0.6). Git: initial commit `a5a3fd8` (T0.5 uncommitted).
 
 ## Next
 
-**T0.5 — Role routing in the app** (`06-implementation-plan.md`): build `(auth)/login`,
-`(auth)/otp`, `(auth)/onboarding` against the real API; refresh token in
-`expo-secure-store`, access token in memory (already wired in `src/lib/tokens.ts`);
-root layout gate routes to `(customer)/(delivery)/(admin)` by role from `/me`;
-i18next kn/hi/en + language picker on first launch.
-Done when: 3 test numbers → 3 home screens, session survives force-quit.
+**Phase 1 — Catalogue + admin inventory** (`06-implementation-plan.md`). Then
+Phase 2 (manual ordering), etc.
 
-Then Phase 1 (catalogue + admin inventory), Phase 2 (manual ordering), etc.
+Left for T0.5 (needs a device/emulator, not blocking): drive the 3 dev numbers
+(`+919000000010/20/30`, dev OTP `000000`) → 3 home screens and confirm force-quit
+restores the session. Code path verified by typecheck + native bundle; not yet run
+on a device here.
 
 ## Key decisions (don't undo without reason)
 
@@ -65,3 +65,9 @@ Then Phase 1 (catalogue + admin inventory), Phase 2 (manual ordering), etc.
   the binary directly (e.g. `pnpm --filter api test`).
 - `pkill -f "<pattern>"` can match the running shell → exit 144; target PIDs instead.
 - Background API server: launch with `nohup node --import tsx src/index.ts &`.
+- `pnpm --filter mobile lint` currently errors (`Cannot find module
+  eslint-config-expo/flat`) — the flat config isn't resolving under the hoisted
+  linker. Typecheck (`pnpm -r typecheck`) is the working gate meanwhile.
+- Verify mobile bundles with `pnpm --filter mobile exec expo export --platform ios`
+  (native path). `--platform web` fails on a nativewind `global.css` cache — web
+  isn't a target; ignore it.
