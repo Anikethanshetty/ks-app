@@ -1,6 +1,8 @@
 import {
   AuthTokens,
   HealthResponse,
+  InventoryListResponse,
+  InventoryTab,
   MePatchBody,
   OkResponse,
   OtpRequestResponse,
@@ -57,4 +59,11 @@ export const authApi = {
     }
     await tokenStore.clear();
   },
+};
+
+export const inventoryApi = {
+  list: (tab: InventoryTab, page: number, pageSize = 50) =>
+    apiFetch(`/admin/inventory?tab=${tab}&page=${page}&pageSize=${pageSize}`, {
+      schema: InventoryListResponse,
+    }),
 };

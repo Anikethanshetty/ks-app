@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -74,12 +75,81 @@ async function main(): Promise<void> {
     }
   }
 
-  const [cats, users] = await Promise.all([
+  // ── dev-only synthetic catalogue (T1.1): 300 products/variants across the
+  // 13 categories so the admin inventory list has enough rows to page and
+  // filter against. Phase 8 replaces this with the real, human-entered
+  // catalogue via CSV import (T1.5) — delete-and-recreate keeps this idempotent.
+  if (process.env.NODE_ENV !== "production") {
+    await prisma.product.deleteMany({
+      where: { variants: { some: { sku: { startsWith: "DEV-" } } } },
+    });
+
+    const categories = await prisma.category.findMany({ orderBy: { sortOrder: "asc" } });
+    const TARGET = 300;
+    const products: Array<{
+      id: string;
+      categoryId: string;
+      nameEn: string;
+      nameKn: string;
+      nameHi: string;
+    }> = [];
+    const variants: Array<{
+      id: string;
+      productId: string;
+      sku: string;
+      packSize: number;
+      unit: "piece";
+      packLabel: string;
+      mrp: number;
+      sellingPrice: number;
+      stock: number;
+      lowStockThreshold: number;
+      isDefault: boolean;
+    }> = [];
+
+    for (let i = 0; i < TARGET; i++) {
+      const cat = categories[i % categories.length]!;
+      const n = i + 1;
+      const productId = randomUUID();
+      products.push({
+        id: productId,
+        categoryId: cat.id,
+        nameEn: `${cat.nameEn} Item ${n}`,
+        nameKn: `${cat.nameKn} ${n}`,
+        nameHi: `${cat.nameHi} ${n}`,
+      });
+      // ~3% out of stock, ~7% low stock (below the default threshold of 5), rest healthy.
+      const stock = n % 30 === 0 ? 0 : n % 10 === 0 ? 2 : 40 + (n % 60);
+      const mrp = 50 + (n % 200);
+      const sellingPrice = mrp - (5 + (n % 15));
+      variants.push({
+        id: randomUUID(),
+        productId,
+        sku: `DEV-${String(n).padStart(4, "0")}`,
+        packSize: 1,
+        unit: "piece",
+        packLabel: "1 pc",
+        mrp,
+        sellingPrice,
+        stock,
+        lowStockThreshold: 5,
+        isDefault: true,
+      });
+    }
+
+    await prisma.product.createMany({ data: products });
+    await prisma.productVariant.createMany({ data: variants });
+  }
+
+  const [cats, users, variantCount] = await Promise.all([
     prisma.category.count(),
     prisma.user.count(),
+    prisma.productVariant.count(),
   ]);
   // eslint-disable-next-line no-console
-  console.log(`Seed complete: ${cats} categories, ${users} users, 1 shop_settings row.`);
+  console.log(
+    `Seed complete: ${cats} categories, ${users} users, ${variantCount} variants, 1 shop_settings row.`,
+  );
 }
 
 main()

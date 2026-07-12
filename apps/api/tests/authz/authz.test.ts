@@ -10,9 +10,9 @@ import { startInfra, type Infra } from "../helpers/infra.js";
  * Every hostile attempt must fail with 404 or 403 — never with another user's
  * data. RLS is gone; this suite is what stands between customers and each other.
  *
- * Endpoints that don't exist yet (invoices, collect-cod, /admin/*, payment
- * proofs) are listed as `it.todo` so the gate stays visible and each is filled
- * in when its endpoint lands.
+ * Endpoints that don't exist yet (invoices, collect-cod, payment proofs) are
+ * listed as `it.todo` so the gate stays visible and each is filled in when
+ * its endpoint lands.
  */
 
 type App = Awaited<ReturnType<typeof import("../../src/server.js")["buildServer"]>>;
@@ -212,6 +212,42 @@ describe("authz — profile", () => {
   });
 });
 
+describe("authz — admin routes", () => {
+  it("customer cannot hit /admin/* → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/inventory`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("delivery cannot hit /admin/* → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/inventory`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("no token on /admin/* → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/admin/inventory` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("admin can hit /admin/* (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/inventory`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+  });
+});
+
 describe("authz — tokens", () => {
   it("no token → 401", async () => {
     const res = await app.inject({ method: "GET", url: `${V1}/me` });
@@ -270,6 +306,5 @@ describe("authz — tokens", () => {
 describe("authz — endpoints not yet built (fill in when they land)", () => {
   it.todo("A cannot GET B's invoice → 404");
   it.todo("D cannot collect-cod on an order that isn't theirs → 404");
-  it.todo("nobody but admin can hit any /admin/* route → 403");
   it.todo("A cannot fetch B's payment-proof (presigned, scoped, expiring)");
 });

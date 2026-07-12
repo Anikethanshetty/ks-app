@@ -1,7 +1,8 @@
 import type { User } from "@prisma/client";
-import type { OrderDto, OrderSummaryDto, PublicUser } from "@kss/shared";
+import type { InventoryVariantDto, OrderDto, OrderSummaryDto, PublicUser } from "@kss/shared";
 import { toPaise } from "./money.js";
 import type { OrderWithItems } from "../repositories/order.repository.js";
+import type { InventoryRow } from "../repositories/inventory.repository.js";
 
 /** The only shape of a user the API ever returns to a client. */
 export function toPublicUser(u: User): PublicUser {
@@ -48,4 +49,27 @@ export function toOrderDto(o: OrderWithItems): OrderDto {
 export function toOrderSummaryDto(o: OrderWithItems): OrderSummaryDto {
   const { items: _items, addressSnapshot: _addr, ...rest } = toOrderDto(o);
   return rest;
+}
+
+/** Raw-SQL inventory row → DTO. Stock buckets are computed here, not stored. */
+export function toInventoryVariantDto(row: InventoryRow): InventoryVariantDto {
+  const stock = Number(row.stock);
+  const lowStockThreshold = Number(row.lowStockThreshold);
+  return {
+    id: row.id,
+    productId: row.productId,
+    productNameEn: row.productNameEn,
+    productNameKn: row.productNameKn,
+    productNameHi: row.productNameHi,
+    categoryNameEn: row.categoryNameEn,
+    packLabel: row.packLabel,
+    sku: row.sku,
+    mrpPaise: toPaise(row.mrp),
+    sellingPricePaise: toPaise(row.sellingPrice),
+    stock,
+    lowStockThreshold,
+    isLowStock: stock > 0 && stock <= lowStockThreshold,
+    isOutOfStock: stock <= 0,
+    isActive: row.isActive,
+  };
 }

@@ -36,5 +36,18 @@
   "common": {
     "retry": "फिर से कोशिश करें",
     "somethingWrong": "कुछ ग़लत हो गया।"
+  },
+  "admin": {
+    "inventory": {
+      "title": "इन्वेंटरी",
+      "tabAll": "सभी",
+      "tabLowStock": "कम स्टॉक",
+      "tabOutOfStock": "स्टॉक खत्म",
+      "stockLabel": "{{count}} स्टॉक में",
+      "outOfStock": "स्टॉक खत्म",
+      "loading": "इन्वेंटरी लोड हो रही है…",
+      "empty": "यहाँ अभी कोई उत्पाद नहीं है।",
+      "error": "दुकान तक नहीं पहुँच पाए।"
+    }
   }
 }

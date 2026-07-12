@@ -1,11 +1,12 @@
 import "../global.css";
 import "@/i18n";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { useFonts } from "expo-font";
 import { router, Stack, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Role } from "@kss/shared";
 import { fontMap } from "@/lib/fonts";
 import { SessionProvider, useSession } from "@/lib/session";
@@ -74,6 +75,7 @@ function RootNavigator() {
 
 export default function RootLayout() {
   const [loaded] = useFonts(fontMap);
+  const [queryClient] = useState(() => new QueryClient());
   // Hold the splash until the tri-script fonts are ready (avoids a flash of
   // fallback glyphs on Kannada/Hindi text).
   if (!loaded) return null;
@@ -81,9 +83,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <SessionProvider>
-        <RootNavigator />
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <RootNavigator />
+        </SessionProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }

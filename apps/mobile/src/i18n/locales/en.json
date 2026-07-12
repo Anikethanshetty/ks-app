@@ -36,5 +36,18 @@
   "common": {
     "retry": "Try again",
     "somethingWrong": "Something went wrong."
+  },
+  "admin": {
+    "inventory": {
+      "title": "Inventory",
+      "tabAll": "All",
+      "tabLowStock": "Low stock",
+      "tabOutOfStock": "Out of stock",
+      "stockLabel": "{{count}} in stock",
+      "outOfStock": "Out of stock",
+      "loading": "Loading inventory…",
+      "empty": "No products here yet.",
+      "error": "Couldn't reach the shop."
+    }
   }
 }
