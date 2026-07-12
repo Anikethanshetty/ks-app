@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import {
@@ -224,13 +225,26 @@ export const productRoutes: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (req) => {
-      const alias = await productRepository.createAlias(
-        req.actor!,
-        req.params.productId,
-        req.body.alias,
-        req.body.language,
-      );
-      return toAliasDto(alias);
+      try {
+        const alias = await productRepository.createAlias(
+          req.actor!,
+          req.params.productId,
+          req.body.alias,
+          req.body.language,
+        );
+        return toAliasDto(alias);
+      } catch (err) {
+        if (
+          err instanceof Prisma.PrismaClientKnownRequestError &&
+          err.code === "P2002"
+        ) {
+          throw new AppError(
+            "VALIDATION_ERROR",
+            "This alias already exists for this product.",
+          );
+        }
+        throw err;
+      }
     },
   );
 
