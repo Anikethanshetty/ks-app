@@ -585,6 +585,66 @@ describe("authz — admin products", () => {
     expect(res.statusCode).toBe(403);
   });
 
+  it("admin can preview CSV import (control)", async () => {
+    const csv = `name_en,name_kn,name_hi,category,pack_label,mrp,price,stock
+Test Rice,ಟೆಸ್ಟ್ ಅಕ್ಕಿ,टेस्ट चावल,Rice,1 kg,100,90,50
+Test Dal,ಟೆಸ್ಟ್ ಬೇಳೆ,टेस्ट दाल,Pulses,1 kg,120,110,30`;
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/import/preview`,
+      headers: auth(ADMIN.accessToken),
+      payload: { csv },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().totalRows).toBe(2);
+    expect(res.json().validRows).toBe(2);
+  });
+
+  it("customer cannot preview CSV import → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/import/preview`,
+      headers: auth(A.accessToken),
+      payload: { csv: "name_en,name_kn,name_hi,category\nTest,Test,Test,Cat" },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("admin can commit CSV import (control)", async () => {
+    const csv = `name_en,name_kn,name_hi,category,pack_label,unit,mrp,price,stock
+CsvTest Rice,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಅಕ್ಕि,सीएसवी टेस्ट चावल,TstCat,1 kg,kg,100,90,50
+CsvTest Dal,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಬೇಳೆ,सीएसवी टेस्ट दाल,TstCat,1 kg,kg,120,110,30`;
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/import/commit`,
+      headers: auth(ADMIN.accessToken),
+      payload: { csv },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().productsCreated).toBe(2);
+    expect(res.json().variantsCreated).toBe(2);
+  });
+
+  it("customer cannot commit CSV import → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/import/commit`,
+      headers: auth(A.accessToken),
+      payload: { csv: "name_en,name_kn,name_hi,category\nTest,Test,Test,Cat" },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("delivery cannot commit CSV import → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/inventory/import/commit`,
+      headers: auth(D.accessToken),
+      payload: { csv: "name_en,name_kn,name_hi,category\nTest,Test,Test,Cat" },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
   it("admin can adjust stock (control)", async () => {
     const cats = await app.inject({
       method: "GET",

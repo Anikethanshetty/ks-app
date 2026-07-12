@@ -111,6 +111,30 @@
       "success": "ದಾಸ್ತಾನು ಸರಿಹೊಂದಿಸಲಾಗಿದೆ.",
       "error": "ದಾಸ್ತಾನು ಸರಿಹೊಂದಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
       "outOfStock": "ತೆಗೆದುಹಾಕಲು ಸಾಕಷ್ಟು ದಾಸ್ತಾನು ಇಲ್ಲ."
+    },
+    "csvImport": {
+      "title": "CSV ಆಮದು",
+      "subtitle": "CSV ಫೈಲ್‌ನಿಂದ ಉತ್ಪನ್ನಗಳನ್ನು ಆಮದು ಮಾಡಿ. ಕಾಲಮ್‌ಗಳು: name_en, name_kn, name_hi, category, pack_label, unit, mrp, price, cost, stock, aliases (ಪೈಪ್-ಬೇರ್ಪಡಿಸಲಾಗಿದೆ).",
+      "csvLabel": "CSV ಡೇಟಾವನ್ನು ಅಂಟಿಸಿ",
+      "csvPlaceholder": "name_en,name_kn,name_hi,category,pack_label,mrp,price,stock\nRice,ಅಕ್ಕಿ,चावल,Groceries,1 kg,100,90,50",
+      "preview": "ಪೂರ್ವವೀಕ್ಷಣೆ",
+      "commit": "ಆಮದು ಮಾಡಿ",
+      "previewing": "ಪಾರ್ಸ್ ಮಾಡಲಾಗುತ್ತಿದೆ…",
+      "committing": "ಆಮದು ಮಾಡಲಾಗುತ್ತಿದೆ…",
+      "totalRows": "ಒಟ್ಟು ಸಾಲುಗಳು: {{count}}",
+      "validRows": "ಮಾನ್ಯ: {{count}}",
+      "errorRows": "ದೋಷಗಳು: {{count}}",
+      "rowNumber": "#",
+      "productName": "ಉತ್ಪನ್ನ",
+      "valid": "✓",
+      "invalid": "✗",
+      "errors": "ದೋಷಗಳು",
+      "noErrors": "ದೋಷಗಳಿಲ್ಲ",
+      "commitSuccess": "{{products}} ಉತ್ಪನ್ನಗಳು, {{variants}} ರೂಪಾಂತರಗಳು, {{aliases}} ಉಪನಾಮಗಳನ್ನು ಆಮದು ಮಾಡಲಾಗಿದೆ.",
+      "commitErrors": "{{count}} ಸಾಲು(ಗಳು) ವಿಫಲವಾಗಿವೆ.",
+      "error": "CSV ಅನ್ನು ಪಾರ್ಸ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
+      "empty": "ಮೇಲೆ CSV ಡೇಟಾವನ್ನು ಅಂಟಿಸಿ ಮತ್ತು ಫಲಿತಾಂಶಗಳನ್ನು ನೋಡಲು ಪೂರ್ವವೀಕ್ಷಣೆ ಟ್ಯಾಪ್ ಮಾಡಿ.",
+      "parseError": "CSV ಪಾರ್ಸಿಂಗ್ ವಿಫಲವಾಗಿದೆ. ಫಾರ್ಮ್ಯಾಟ್ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
     }
   }
 }

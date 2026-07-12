@@ -96,3 +96,49 @@ export const AdjustStockResponse = z.object({
   reason: MovementReason,
 });
 export type AdjustStockResponse = z.infer<typeof AdjustStockResponse>;
+
+// ─────────────────────────── CSV import (T1.5, A08) ───────────────────────────
+
+/** A single row from the CSV after parsing and validation. */
+export const ImportRowResult = z.object({
+  rowNumber: z.number(),
+  nameEn: z.string(),
+  nameKn: z.string(),
+  nameHi: z.string(),
+  category: z.string(),
+  brand: z.string().nullable(),
+  packSize: z.number().nullable(),
+  unit: z.string().nullable(),
+  packLabel: z.string(),
+  mrpPaise: z.number().nullable(),
+  sellingPricePaise: z.number().nullable(),
+  costPaise: z.number().nullable(),
+  stock: z.number().nullable(),
+  aliases: z.array(z.string()),
+  errors: z.array(z.string()),
+  valid: z.boolean(),
+});
+export type ImportRowResult = z.infer<typeof ImportRowResult>;
+
+/** Preview response: parse summary + per-row results. */
+export const ImportPreviewResponse = z.object({
+  totalRows: z.number(),
+  validRows: z.number(),
+  errorRows: z.number(),
+  rows: z.array(ImportRowResult),
+});
+export type ImportPreviewResponse = z.infer<typeof ImportPreviewResponse>;
+
+/** Commit response: how many products/variants were created. */
+export const ImportCommitResponse = z.object({
+  productsCreated: z.number(),
+  variantsCreated: z.number(),
+  aliasesCreated: z.number(),
+  errors: z.array(z.object({ rowNumber: z.number(), error: z.string() })),
+});
+export type ImportCommitResponse = z.infer<typeof ImportCommitResponse>;
+
+export const ImportCsvBody = z.object({
+  csv: z.string().min(1),
+});
+export type ImportCsvBody = z.infer<typeof ImportCsvBody>;

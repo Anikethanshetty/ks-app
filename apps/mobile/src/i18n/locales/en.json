@@ -111,6 +111,30 @@
       "success": "Stock adjusted.",
       "error": "Couldn't adjust stock.",
       "outOfStock": "Not enough stock to remove."
+    },
+    "csvImport": {
+      "title": "CSV Import",
+      "subtitle": "Import products from a CSV file. Columns: name_en, name_kn, name_hi, category, pack_label, unit, mrp, price, cost, stock, aliases (pipe-separated).",
+      "csvLabel": "Paste CSV data",
+      "csvPlaceholder": "name_en,name_kn,name_hi,category,pack_label,mrp,price,stock\nRice,ಅಕ್ಕಿ,चावल,Groceries,1 kg,100,90,50",
+      "preview": "Preview",
+      "commit": "Import",
+      "previewing": "Parsing…",
+      "committing": "Importing…",
+      "totalRows": "Total rows: {{count}}",
+      "validRows": "Valid: {{count}}",
+      "errorRows": "Errors: {{count}}",
+      "rowNumber": "#",
+      "productName": "Product",
+      "valid": "✓",
+      "invalid": "✗",
+      "errors": "Errors",
+      "noErrors": "No errors",
+      "commitSuccess": "Imported {{products}} products, {{variants}} variants, {{aliases}} aliases.",
+      "commitErrors": "{{count}} row(s) failed.",
+      "error": "Couldn't parse the CSV.",
+      "empty": "Paste CSV data above and tap Preview to see results.",
+      "parseError": "CSV parsing failed. Check the format and try again."
     }
   }
 }

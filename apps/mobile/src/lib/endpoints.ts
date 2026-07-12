@@ -9,6 +9,8 @@ import {
   CreateProductBody,
   CreateVariantBody,
   HealthResponse,
+  ImportCommitResponse,
+  ImportPreviewResponse,
   InventoryListResponse,
   InventoryTab,
   MePatchBody,
@@ -84,6 +86,21 @@ export const inventoryApi = {
       method: "POST",
       body,
       schema: AdjustStockResponse,
+    }),
+
+  // ── CSV import (T1.5, A08) ──
+  importPreview: (csv: string) =>
+    apiFetch("/admin/inventory/import/preview", {
+      method: "POST",
+      body: { csv },
+      schema: ImportPreviewResponse,
+    }),
+
+  importCommit: (csv: string) =>
+    apiFetch("/admin/inventory/import/commit", {
+      method: "POST",
+      body: { csv },
+      schema: ImportCommitResponse,
     }),
 };
 

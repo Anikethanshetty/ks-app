@@ -111,6 +111,30 @@
       "success": "स्टॉक समायोजित हो गया।",
       "error": "स्टॉक समायोजित नहीं किया जा सका।",
       "outOfStock": "निकालने के लिए पर्याप्त स्टॉक नहीं है।"
+    },
+    "csvImport": {
+      "title": "CSV आयात",
+      "subtitle": "CSV फ़ाइल से उत्पाद आयात करें। कॉलम: name_en, name_kn, name_hi, category, pack_label, unit, mrp, price, cost, stock, aliases (पाइप-पृथक).",
+      "csvLabel": "CSV डेटा पेस्ट करें",
+      "csvPlaceholder": "name_en,name_kn,name_hi,category,pack_label,mrp,price,stock\nRice,ಅಕ್ಕಿ,चावल,Groceries,1 kg,100,90,50",
+      "preview": "पूर्वावलोकन",
+      "commit": "आयात करें",
+      "previewing": "पार्स हो रहा है…",
+      "committing": "आयात हो रहा है…",
+      "totalRows": "कुल पंक्तियाँ: {{count}}",
+      "validRows": "मान्य: {{count}}",
+      "errorRows": "त्रुटियाँ: {{count}}",
+      "rowNumber": "#",
+      "productName": "उत्पाद",
+      "valid": "✓",
+      "invalid": "✗",
+      "errors": "त्रुटियाँ",
+      "noErrors": "कोई त्रुटि नहीं",
+      "commitSuccess": "{{products}} उत्पाद, {{variants}} वेरिएंट, {{aliases}} उपनाम आयात किए गए।",
+      "commitErrors": "{{count}} पंक्ति(याँ) विफल।",
+      "error": "CSV पार्स नहीं किया जा सका।",
+      "empty": "ऊपर CSV डेटा पेस्ट करें और परिणाम देखने के लिए पूर्वावलोकन टैप करें।",
+      "parseError": "CSV पार्सिंग विफल रही। फ़ॉर्मैट जाँचें और पुनः प्रयास करें।"
     }
   }
 }
