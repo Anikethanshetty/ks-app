@@ -8,6 +8,9 @@ export default function CustomerLayout() {
       <Stack.Screen name="product/[id]" />
       <Stack.Screen name="search" />
       <Stack.Screen name="cart" />
+      <Stack.Screen name="addresses" />
+      <Stack.Screen name="checkout" />
+      <Stack.Screen name="order/[id]" />
     </Stack>
   );
 }

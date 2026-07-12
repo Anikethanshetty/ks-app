@@ -1,5 +1,7 @@
 import { z } from "zod";
 import {
+  AddressDto,
+  AddressListResponse,
   AdjustStockBody,
   AdjustStockResponse,
   AliasDto,
@@ -10,6 +12,7 @@ import {
   CatalogueProductListResponse,
   CategoriesResponse,
   CategoryDto,
+  CreateAddressBody,
   CreateAliasBody,
   CreateProductBody,
   CreateVariantBody,
@@ -20,11 +23,15 @@ import {
   InventoryTab,
   MePatchBody,
   OkResponse,
+  OrderDto,
+  OrderPreviewDto,
   OtpRequestResponse,
   ProductDetailDto,
   ProductDto,
   PublicUser,
   SearchResponse,
+  ShopSettingsDto,
+  UpdateAddressBody,
   UpdateProductBody,
   UpdateVariantBody,
 } from "@kss/shared";
@@ -153,6 +160,50 @@ export const catalogueApi = {
   search: (q: string, lang = "kn", limit = 20) =>
     apiFetch(`/search?q=${encodeURIComponent(q)}&lang=${lang}&limit=${limit}`, {
       schema: SearchResponse,
+    }),
+};
+
+/** Address + checkout endpoints (T2.2). */
+export const addressApi = {
+  list: () => apiFetch("/addresses", { schema: AddressListResponse }),
+
+  create: (body: z.infer<typeof CreateAddressBody>) =>
+    apiFetch("/addresses", { method: "POST", body, schema: AddressDto }),
+
+  update: (id: string, body: z.infer<typeof UpdateAddressBody>) =>
+    apiFetch(`/addresses/${id}`, { method: "PATCH", body, schema: AddressDto }),
+
+  delete: (id: string) =>
+    apiFetch(`/addresses/${id}`, { method: "DELETE", schema: OkResponse }),
+};
+
+export const shopApi = {
+  getSettings: () => apiFetch("/shop/settings", { schema: ShopSettingsDto }),
+};
+
+export const orderApi = {
+  preview: (addressId: string) =>
+    apiFetch(`/orders/preview?addressId=${addressId}`, { schema: OrderPreviewDto }),
+
+  place: (body: { addressId: string; paymentMethod: "cod" | "upi"; note?: string }) =>
+    apiFetch("/orders", {
+      method: "POST",
+      body,
+      schema: OrderDto,
+    }),
+
+  get: (id: string) => apiFetch(`/orders/${id}`, { schema: OrderDto }),
+
+  list: (cursor?: string) =>
+    apiFetch(`/orders${cursor ? `?cursor=${cursor}` : ""}`, {
+      schema: z.object({ items: z.array(z.any()), nextCursor: z.string().nullable() }),
+    }),
+
+  cancel: (id: string, reason?: string) =>
+    apiFetch(`/orders/${id}/cancel`, {
+      method: "POST",
+      body: { reason },
+      schema: OrderDto,
     }),
 };
 

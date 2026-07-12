@@ -1045,6 +1045,164 @@ CsvTest Dal,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಬೇಳೆ,सीएस�
     expect(typeof res.json().count).toBe("number");
   });
 
+  // ── Address management + shop settings + order preview (T2.2) ──
+
+  it("A can create an address (control)", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/addresses`,
+      headers: auth(A.accessToken),
+      payload: {
+        label: "Home",
+        line1: "123 Test St",
+        area: "Test Area",
+        city: "Mysuru",
+        pincode: "570001",
+      },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().line1).toBe("123 Test St");
+  });
+
+  it("A can list own addresses (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/addresses`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().items.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("delivery cannot manage addresses → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/addresses`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("no token on addresses → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/addresses` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("B cannot update A's address → 404", async () => {
+    const addrRes = await app.inject({
+      method: "GET",
+      url: `${V1}/addresses`,
+      headers: auth(A.accessToken),
+    });
+    const addrId = addrRes.json().items[0]?.id;
+    expect(addrId).toBeDefined();
+
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/addresses/${addrId}`,
+      headers: auth(B.accessToken),
+      payload: { line1: "Hacked" },
+    });
+    expect(res.statusCode).toBe(404);
+  });
+
+  it("B cannot delete A's address → 404", async () => {
+    const addrRes = await app.inject({
+      method: "GET",
+      url: `${V1}/addresses`,
+      headers: auth(A.accessToken),
+    });
+    const addrId = addrRes.json().items[0]?.id;
+    expect(addrId).toBeDefined();
+
+    const res = await app.inject({
+      method: "DELETE",
+      url: `${V1}/addresses/${addrId}`,
+      headers: auth(B.accessToken),
+    });
+    expect(res.statusCode).toBe(404);
+  });
+
+  it("any authenticated role can GET shop settings (control)", async () => {
+    const customerRes = await app.inject({
+      method: "GET",
+      url: `${V1}/shop/settings`,
+      headers: auth(A.accessToken),
+    });
+    expect(customerRes.statusCode).toBe(200);
+    expect(customerRes.json().shopName).toBeDefined();
+
+    const adminRes = await app.inject({
+      method: "GET",
+      url: `${V1}/shop/settings`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(adminRes.statusCode).toBe(200);
+
+    const deliveryRes = await app.inject({
+      method: "GET",
+      url: `${V1}/shop/settings`,
+      headers: auth(D.accessToken),
+    });
+    expect(deliveryRes.statusCode).toBe(200);
+  });
+
+  it("no token on shop settings → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/shop/settings` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("order preview with valid address + cart items works (control)", async () => {
+    // Ensure A has items in cart
+    const variant = await prisma.productVariant.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: "asc" },
+    });
+    expect(variant).toBeDefined();
+    await app.inject({
+      method: "POST",
+      url: `${V1}/cart/add`,
+      headers: auth(A.accessToken),
+      payload: { variantId: variant!.id, quantity: 1 },
+    });
+
+    // Get A's address
+    const addrRes = await app.inject({
+      method: "GET",
+      url: `${V1}/addresses`,
+      headers: auth(A.accessToken),
+    });
+    const addrId = addrRes.json().items[0]?.id;
+    expect(addrId).toBeDefined();
+
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/orders/preview?addressId=${addrId}`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().itemCount).toBeGreaterThanOrEqual(1);
+    expect(res.json().totalPaise).toBeGreaterThan(0);
+  });
+
+  it("order preview with B's address → INVALID_ADDRESS", async () => {
+    const addrRes = await app.inject({
+      method: "GET",
+      url: `${V1}/addresses`,
+      headers: auth(A.accessToken),
+    });
+    const addrId = addrRes.json().items[0]?.id;
+    expect(addrId).toBeDefined();
+
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/orders/preview?addressId=${addrId}`,
+      headers: auth(B.accessToken),
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe("INVALID_ADDRESS");
+  });
+
   it("admin can add a variant (control)", async () => {
     const cats = await app.inject({
       method: "GET",

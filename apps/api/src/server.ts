@@ -23,6 +23,7 @@ import { inventoryRoutes } from "./routes/inventory.routes.js";
 import { productRoutes } from "./routes/product.routes.js";
 import { catalogueRoutes } from "./routes/catalogue.routes.js";
 import { cartRoutes } from "./routes/cart.routes.js";
+import { addressRoutes } from "./routes/address.routes.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -43,7 +44,9 @@ export async function buildServer() {
   });
   await app.register(rateLimit, {
     global: true,
-    max: RATE_LIMITS.globalPerIpPerMinute,
+    // The authz test suite makes ~100+ rapid app.inject calls; a higher limit
+    // in test avoids spurious 429 failures. Production remains at 100/min.
+    max: isProduction ? RATE_LIMITS.globalPerIpPerMinute : 10_000,
     timeWindow: "1 minute",
     redis,
   });
@@ -73,6 +76,7 @@ export async function buildServer() {
       await v1.register(productRoutes);
       await v1.register(catalogueRoutes);
       await v1.register(cartRoutes);
+      await v1.register(addressRoutes);
     },
     { prefix: "/api/v1" },
   );

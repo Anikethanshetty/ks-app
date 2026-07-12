@@ -84,12 +84,71 @@
       "added": "Added to cart",
       "addError": "Couldn't add to cart.",
       "removeError": "Couldn't remove item."
+    },
+    "address": {
+      "title": "My Addresses",
+      "addTitle": "Add Address",
+      "editTitle": "Edit Address",
+      "label": "Label",
+      "labelPlaceholder": "Home / Work",
+      "line1": "Address line 1",
+      "line1Placeholder": "House / Flat / Building",
+      "line2": "Address line 2 (optional)",
+      "area": "Area / Locality",
+      "city": "City",
+      "pincode": "Pincode",
+      "save": "Save Address",
+      "saving": "Saving…",
+      "delete": "Delete",
+      "empty": "No addresses saved yet.",
+      "addNew": "Add New Address",
+      "error": "Couldn't load addresses.",
+      "saveError": "Couldn't save address.",
+      "deleteConfirm": "Delete this address?",
+      "deleteError": "Couldn't delete address.",
+      "makeDefault": "Set as default"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "selectAddress": "Delivery Address",
+      "addAddress": "+ Add New",
+      "changeAddress": "Change",
+      "orderSummary": "Order Summary",
+      "subtotal": "Subtotal",
+      "deliveryFee": "Delivery Fee",
+      "freeDelivery": "Free",
+      "freeDeliveryAbove": "Free on orders above ₹{{amount}}",
+      "total": "Total",
+      "paymentMethod": "Payment Method",
+      "cod": "Cash on Delivery",
+      "upi": "UPI / Online",
+      "codLimitExceeded": "Orders above ₹{{limit}} cannot use Cash on Delivery.",
+      "placeOrder": "Place Order",
+      "placing": "Placing…",
+      "loading": "Preparing checkout…",
+      "error": "Checkout unavailable. Try again.",
+      "outOfStockItems": "Some items are out of stock.",
+      "shopClosed": "Shop is not accepting orders right now.",
+      "invalidAddress": "Please select a valid delivery address.",
+      "emptyCart": "Your cart is empty."
+    },
+    "orders": {
+      "placed": "Order placed!",
+      "continueShopping": "Continue Shopping",
+      "status": "Status",
+      "loading": "Loading order…",
+      "error": "Couldn't load order.",
+      "noOrders": "No orders yet."
     }
   },
   "common": {
     "retry": "Try again",
     "required": "This field is required",
-    "somethingWrong": "Something went wrong."
+    "somethingWrong": "Something went wrong.",
+    "loading": "Loading…",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "delete": "Delete"
   },
   "admin": {
     "inventory": {

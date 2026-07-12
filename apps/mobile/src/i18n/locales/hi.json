@@ -84,12 +84,71 @@
       "added": "कार्ट में जोड़ा गया",
       "addError": "कार्ट में जोड़ा नहीं जा सका।",
       "removeError": "आइटम हटाया नहीं जा सका।"
+    },
+    "address": {
+      "title": "मेरे पते",
+      "addTitle": "पता जोड़ें",
+      "editTitle": "पता संपादित करें",
+      "label": "लेबल",
+      "labelPlaceholder": "घर / कार्यालय",
+      "line1": "पता पंक्ति 1",
+      "line1Placeholder": "मकान / फ्लैट / भवन",
+      "line2": "पता पंक्ति 2 (वैकल्पिक)",
+      "area": "क्षेत्र / इलाका",
+      "city": "शहर",
+      "pincode": "पिनकोड",
+      "save": "पता सहेजें",
+      "saving": "सहेजा जा रहा है…",
+      "delete": "हटाएँ",
+      "empty": "अभी तक कोई पता सहेजा नहीं गया।",
+      "addNew": "नया पता जोड़ें",
+      "error": "पते लोड नहीं किए जा सके।",
+      "saveError": "पता सहेजा नहीं जा सका।",
+      "deleteConfirm": "यह पता हटाएँ?",
+      "deleteError": "पता हटाया नहीं जा सका।",
+      "makeDefault": "डिफ़ॉल्ट के रूप में सेट करें"
+    },
+    "checkout": {
+      "title": "चेकआउट",
+      "selectAddress": "डिलीवरी पता",
+      "addAddress": "+ नया जोड़ें",
+      "changeAddress": "बदलें",
+      "orderSummary": "ऑर्डर सारांश",
+      "subtotal": "कुल योग",
+      "deliveryFee": "डिलीवरी शुल्क",
+      "freeDelivery": "मुफ़्त",
+      "freeDeliveryAbove": "₹{{amount}} से अधिक के ऑर्डर पर मुफ़्त",
+      "total": "कुल",
+      "paymentMethod": "भुगतान विधि",
+      "cod": "नकद भुगतान",
+      "upi": "UPI / ऑनलाइन",
+      "codLimitExceeded": "₹{{limit}} से अधिक के ऑर्डर पर नकद भुगतान उपलब्ध नहीं।",
+      "placeOrder": "ऑर्डर करें",
+      "placing": "ऑर्डर किया जा रहा है…",
+      "loading": "चेकआउट तैयार किया जा रहा है…",
+      "error": "चेकआउट उपलब्ध नहीं। पुनः प्रयास करें।",
+      "outOfStockItems": "कुछ आइटम स्टॉक में नहीं हैं।",
+      "shopClosed": "दुकान अभी ऑर्डर स्वीकार नहीं कर रही है।",
+      "invalidAddress": "कृपया एक मान्य डिलीवरी पता चुनें।",
+      "emptyCart": "आपकी कार्ट खाली है।"
+    },
+    "orders": {
+      "placed": "ऑर्डर हो गया!",
+      "continueShopping": "खरीदारी जारी रखें",
+      "status": "स्थिति",
+      "loading": "ऑर्डर लोड हो रहा है…",
+      "error": "ऑर्डर लोड नहीं किया जा सका।",
+      "noOrders": "अभी तक कोई ऑर्डर नहीं।"
     }
   },
   "common": {
     "retry": "फिर से कोशिश करें",
     "required": "यह फ़ील्ड आवश्यक है",
-    "somethingWrong": "कुछ ग़लत हो गया।"
+    "somethingWrong": "कुछ ग़लत हो गया।",
+    "loading": "लोड हो रहा है…",
+    "edit": "संपादित करें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएँ"
   },
   "admin": {
     "inventory": {
