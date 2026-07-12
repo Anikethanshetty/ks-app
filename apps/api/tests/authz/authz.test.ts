@@ -516,6 +516,75 @@ describe("authz — admin products", () => {
     expect(res.statusCode).toBe(403);
   });
 
+  it("admin can add an alias (control)", async () => {
+    const cats = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/categories`,
+      headers: auth(ADMIN.accessToken),
+    });
+    const categoryId = cats.json().items[0].id;
+
+    const created = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products`,
+      headers: auth(ADMIN.accessToken),
+      payload: {
+        categoryId,
+        nameEn: "Authz Alias Test",
+        nameKn: "ಆತ್ಜ್ ಅಲಿಯಾಸ್ ಟೆಸ್ಟ್",
+        nameHi: "ऑथज़ उपनाम टेस्ट",
+      },
+    });
+    const productId = created.json().id;
+
+    // Add alias
+    const added = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products/${productId}/aliases`,
+      headers: auth(ADMIN.accessToken),
+      payload: { alias: "akki" },
+    });
+    expect(added.statusCode).toBe(200);
+    expect(added.json().alias).toBe("akki");
+
+    // List aliases
+    const listed = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/products/${productId}/aliases`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(listed.statusCode).toBe(200);
+    expect(listed.json().items).toHaveLength(1);
+
+    // Delete alias
+    const aliasId = added.json().id;
+    const deleted = await app.inject({
+      method: "DELETE",
+      url: `${V1}/admin/products/${productId}/aliases/${aliasId}`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(deleted.statusCode).toBe(200);
+  });
+
+  it("customer cannot add an alias → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/products/${aOrderId}/aliases`,
+      headers: auth(A.accessToken),
+      payload: { alias: "test" },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("delivery cannot list aliases → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/products/${aOrderId}/aliases`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
   it("admin can add a variant (control)", async () => {
     const cats = await app.inject({
       method: "GET",

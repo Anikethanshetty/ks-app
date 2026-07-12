@@ -81,7 +81,15 @@
       "skuExists": "That SKU already exists.",
       "selectCategory": "Select a category",
       "deleteVariant": "Remove variant",
-      "noVariants": "Add at least one variant."
+      "noVariants": "Add at least one variant.",
+      "aliases": "What do customers call this?",
+      "aliasesHint": "Add the words your customers use when asking for this product. This is what makes voice ordering work.",
+      "aliasPlaceholder": "Type an alias and press Add",
+      "addAlias": "Add",
+      "deleteAlias": "Remove",
+      "aliasAdded": "Alias added.",
+      "aliasRemoved": "Alias removed.",
+      "loadingAliases": "Loading aliases…"
     }
   }
 }

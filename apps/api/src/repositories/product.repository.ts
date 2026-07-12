@@ -141,4 +141,28 @@ export const productRepository = {
     if (excludeVariantId && existing.id === excludeVariantId) return false;
     return true;
   },
+
+  // ── Aliases (T1.3) ──
+
+  /** Get all aliases for a product. */
+  async listAliases(_actor: Actor, productId: string) {
+    return prisma.productAlias.findMany({
+      where: { productId },
+      orderBy: { createdAt: "asc" },
+    });
+  },
+
+  /** Add an alias to a product. Returns the created row. */
+  async createAlias(_actor: Actor, productId: string, alias: string, language?: string) {
+    return prisma.productAlias.create({
+      data: { productId, alias, language: language ?? null, source: "admin" },
+    });
+  },
+
+  /** Delete an alias by id. Only succeeds if it belongs to the given product. */
+  async deleteAlias(_actor: Actor, productId: string, aliasId: string) {
+    await prisma.productAlias.deleteMany({
+      where: { id: aliasId, productId },
+    });
+  },
 };

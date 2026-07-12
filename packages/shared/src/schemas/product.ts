@@ -72,3 +72,20 @@ export const UpdateVariantBody = CreateVariantBody.partial().extend({
   isActive: z.boolean().optional(),
 });
 export type UpdateVariantBody = z.infer<typeof UpdateVariantBody>;
+
+// ─────────────────────────── aliases (T1.3) ───────────────────────────
+
+export const AliasDto = z.object({
+  id: z.string().uuid(),
+  productId: z.string().uuid(),
+  alias: z.string(),
+  language: z.string().nullable(),
+  source: z.string(),
+});
+export type AliasDto = z.infer<typeof AliasDto>;
+
+export const CreateAliasBody = z.object({
+  alias: z.string().min(1).max(120),
+  language: z.string().optional(),
+});
+export type CreateAliasBody = z.infer<typeof CreateAliasBody>;

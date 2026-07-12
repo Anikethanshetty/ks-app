@@ -1,7 +1,9 @@
 import { z } from "zod";
 import {
+  AliasDto,
   AuthTokens,
   CategoryDto,
+  CreateAliasBody,
   CreateProductBody,
   CreateVariantBody,
   HealthResponse,
@@ -106,5 +108,25 @@ export const productApi = {
       method: "PATCH",
       body,
       schema: ProductDto,
+    }),
+
+  // ── ⭐ Aliases (T1.3) ──
+
+  listAliases: (productId: string) =>
+    apiFetch(`/admin/products/${productId}/aliases`, {
+      schema: z.object({ items: z.array(AliasDto) }),
+    }),
+
+  createAlias: (productId: string, body: z.infer<typeof CreateAliasBody>) =>
+    apiFetch(`/admin/products/${productId}/aliases`, {
+      method: "POST",
+      body,
+      schema: AliasDto,
+    }),
+
+  deleteAlias: (productId: string, aliasId: string) =>
+    apiFetch(`/admin/products/${productId}/aliases/${aliasId}`, {
+      method: "DELETE",
+      schema: OkResponse,
     }),
 };

@@ -1,12 +1,15 @@
 import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import {
+  AliasDto,
   CategoryDto,
+  CreateAliasBody,
   CreateProductBody,
   CreateVariantBody,
   ProductDto,
   UpdateProductBody,
   UpdateVariantBody,
+  OkResponse,
 } from "@kss/shared";
 import { AppError } from "../lib/errors.js";
 import { toPaise } from "../lib/money.js";
@@ -18,6 +21,7 @@ import { productService } from "../services/product.service.js";
 const IdParam = z.object({ id: z.string().uuid() });
 const ProductIdParam = z.object({ productId: z.string().uuid() });
 const VariantIdParam = z.object({ productId: z.string().uuid(), variantId: z.string().uuid() });
+const AliasIdParam = z.object({ productId: z.string().uuid(), aliasId: z.string().uuid() });
 
 function toProductDto(product: NonNullable<Awaited<ReturnType<typeof productRepository.findById>>>): z.infer<typeof ProductDto> {
   return {
@@ -48,6 +52,10 @@ function toProductDto(product: NonNullable<Awaited<ReturnType<typeof productRepo
 
 function toCategoryDto(c: Awaited<ReturnType<typeof productRepository.listCategories>>[number]): z.infer<typeof CategoryDto> {
   return { id: c.id, nameEn: c.nameEn, nameKn: c.nameKn, nameHi: c.nameHi, slug: c.slug };
+}
+
+function toAliasDto(a: Awaited<ReturnType<typeof productRepository.listAliases>>[number]): z.infer<typeof AliasDto> {
+  return { id: a.id, productId: a.productId, alias: a.alias, language: a.language, source: a.source };
 }
 
 export const productRoutes: FastifyPluginAsyncZod = async (app) => {
@@ -181,6 +189,65 @@ export const productRoutes: FastifyPluginAsyncZod = async (app) => {
       const product = await productRepository.findById(req.actor!, req.params.productId);
       if (!product) throw new AppError("NOT_FOUND", "Product not found.");
       return toProductDto(product);
+    },
+  );
+
+  // ── ⭐ Aliases (T1.3) ──
+
+  app.get(
+    "/admin/products/:productId/aliases",
+    {
+      preHandler: authorize("admin"),
+      schema: {
+        tags: ["admin", "products"],
+        summary: "List aliases for a product",
+        params: ProductIdParam,
+        response: { 200: z.object({ items: z.array(AliasDto) }) },
+      },
+    },
+    async (req) => {
+      const aliases = await productRepository.listAliases(req.actor!, req.params.productId);
+      return { items: aliases.map(toAliasDto) };
+    },
+  );
+
+  app.post(
+    "/admin/products/:productId/aliases",
+    {
+      preHandler: authorize("admin"),
+      schema: {
+        tags: ["admin", "products"],
+        summary: "Add an alias (busts the voice catalogue cache)",
+        params: ProductIdParam,
+        body: CreateAliasBody,
+        response: { 200: AliasDto },
+      },
+    },
+    async (req) => {
+      const alias = await productRepository.createAlias(
+        req.actor!,
+        req.params.productId,
+        req.body.alias,
+        req.body.language,
+      );
+      return toAliasDto(alias);
+    },
+  );
+
+  app.delete(
+    "/admin/products/:productId/aliases/:aliasId",
+    {
+      preHandler: authorize("admin"),
+      schema: {
+        tags: ["admin", "products"],
+        summary: "Delete an alias",
+        params: AliasIdParam,
+        response: { 200: OkResponse },
+      },
+    },
+    async (req) => {
+      await productRepository.deleteAlias(req.actor!, req.params.productId, req.params.aliasId);
+      return { ok: true as const };
     },
   );
 };

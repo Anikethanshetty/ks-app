@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import type { CategoryDto, CreateVariantBody, UpdateProductBody, UpdateVariantBody } from "@kss/shared";
+import type { AliasDto, CategoryDto, CreateVariantBody, UpdateProductBody, UpdateVariantBody } from "@kss/shared";
 import { UnitType } from "@kss/shared";
 import { productApi } from "@/lib/endpoints";
 
@@ -283,11 +283,45 @@ export default function ProductEditScreen() {
     },
   });
 
+  const queryClient = useQueryClient();
+  const [aliasInput, setAliasInput] = useState("");
+
+  // Fetch aliases for edit mode
+  const aliasesQuery = useQuery({
+    queryKey: ["admin", "product", id, "aliases"],
+    queryFn: () => productApi.listAliases(id!),
+    enabled: !isNew,
+  });
+
+  const addAliasMutation = useMutation({
+    mutationFn: (alias: string) => productApi.createAlias(id!, { alias }),
+    onSuccess: () => {
+      setAliasInput("");
+      queryClient.invalidateQueries({ queryKey: ["admin", "product", id, "aliases"] });
+    },
+    onError: () => Alert.alert(t("admin.product.saveError")),
+  });
+
+  const deleteAliasMutation = useMutation({
+    mutationFn: (aliasId: string) => productApi.deleteAlias(id!, aliasId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "product", id, "aliases"] });
+    },
+    onError: () => Alert.alert(t("admin.product.saveError")),
+  });
+
+  const handleAddAlias = () => {
+    const trimmed = aliasInput.trim();
+    if (!trimmed) return;
+    addAliasMutation.mutate(trimmed);
+  };
+
   const handleSave = () => {
     saveMutation.mutate();
   };
 
   const categoryOptions = useMemo(() => categoriesQuery.data?.items ?? [], [categoriesQuery.data]);
+  const aliases = aliasesQuery.data?.items ?? [];
 
   const isLoading = (!isNew && productQuery.isPending) || categoriesQuery.isPending;
 
@@ -422,6 +456,72 @@ export default function ProductEditScreen() {
               </View>
             )}
           </View>
+
+          {/* ── ⭐ Aliases (T1.3) — what makes voice work ── */}
+          {!isNew && (
+            <View className="mt-8 gap-4 rounded-card border-2 border-brass-tint bg-paper p-4 shadow-sm">
+              <View className="gap-1">
+                <Text className="font-anek-semibold text-h2 text-enamel">
+                  ⭐ {t("admin.product.aliases")}
+                </Text>
+                <Text className="font-anek text-caption text-ink-soft leading-5">
+                  {t("admin.product.aliasesHint")}
+                </Text>
+              </View>
+
+              {aliasesQuery.isPending ? (
+                <Text className="font-anek text-body text-ink-soft">
+                  {t("admin.product.loadingAliases")}
+                </Text>
+              ) : (
+                <View className="flex-row flex-wrap gap-2">
+                  {aliases.map((alias: AliasDto) => (
+                    <View
+                      key={alias.id}
+                      className="flex-row items-center gap-1 rounded-full bg-brass-tint px-3 py-1.5"
+                    >
+                      <Text className="font-anek-medium text-caption text-enamel">
+                        {alias.alias}
+                      </Text>
+                      <Pressable
+                        onPress={() => deleteAliasMutation.mutate(alias.id)}
+                        accessibilityLabel={t("admin.product.deleteAlias")}
+                        className="ml-1 h-5 w-5 items-center justify-center rounded-full bg-enamel/20"
+                      >
+                        <Text className="text-caption text-enamel">✕</Text>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Add alias input */}
+              <View className="flex-row items-center gap-2">
+                <TextInput
+                  value={aliasInput}
+                  onChangeText={setAliasInput}
+                  placeholder={t("admin.product.aliasPlaceholder")}
+                  placeholderTextColor="#6A6E67"
+                  returnKeyType="done"
+                  onSubmitEditing={handleAddAlias}
+                  className="flex-1 rounded-button border border-ruled bg-paper px-4 py-2.5 font-anek text-body text-ink"
+                />
+                <Pressable
+                  onPress={handleAddAlias}
+                  disabled={!aliasInput.trim() || addAliasMutation.isPending}
+                  className={`rounded-button px-4 py-2.5 ${
+                    aliasInput.trim() && !addAliasMutation.isPending
+                      ? "bg-enamel"
+                      : "bg-enamel/40"
+                  }`}
+                >
+                  <Text className="font-anek-medium text-body text-paper">
+                    {t("admin.product.addAlias")}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
 
           {/* ── Variants ── */}
           <View className="mt-8 gap-4">
