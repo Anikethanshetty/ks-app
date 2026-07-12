@@ -20,18 +20,15 @@ UI/UX brief, backend-schema, implementation-plan). Build order = implementation-
 | T1.3 | ⭐ Alias editor (A06) — API: `GET /admin/products/:id/aliases`, `POST /admin/products/:id/aliases`, `DELETE /admin/products/:id/aliases/:aliasId`. Repository methods with `deleteMany` productId-guarded delete. Mobile: brass-tint branded card with ⭐ header and "What makes voice work" hint, chip display of existing aliases with per-chip delete, text input + Add button, instant chip appearance via query invalidation. Authz tests: 4 new tests (admin add/list/delete, customer 403, delivery 403). Typecheck clean, 34 authz tests pass. |
 | T1.4 | Stock adjust sheet (A07) — API: `POST /admin/inventory/adjust` with discriminated union body (stock_in / stock_out / correction), transactional update of variant stock + `inventory_movement` write. Full validation: stock-out checks quantity against current stock, correction computes delta from counted stock. Authz tests: 3 new (admin stock in/out/correction, customer 403, insufficient stock → 409). Mobile: `(admin)/inventory/adjust.tsx` full-screen form with mode tabs (Stock In / Stock Out / Correction), quantity/countedStock fields, reason picker (damage/expiry/shop_use), note field, docked submit button. Query invalidation on success. Full kn/hi/en i18n. Typecheck clean, 33 authz tests pass (4 todo). |
 
-**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, uncommitted.
+**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`).
 
 ## Next
 
 **Phase 1 — Catalogue + admin inventory** (`06-implementation-plan.md`), next up:
-- **T1.3** — ⭐ Alias editor (A06): chip input on the product edit screen,
-  "What do customers call this?", `POST/DELETE /admin/products/:id/aliases`,
-  writes to `product_aliases`. Give this screen visual prominence; it's what
-  makes voice work.
-- T1.4 (stock adjust sheet, writes `inventory_movement` via `adjust_stock()`),
-- T1.5 (CSV import, PapaParse),
+- **T1.5** — CSV import (A08): PapaParse + preview + commit flow.
 - T1.6 (customer catalogue + `GET /search` via pg_trgm).
+
+Then Phase 2 (manual ordering), etc.
 
 Then Phase 2 (manual ordering), etc.
 
