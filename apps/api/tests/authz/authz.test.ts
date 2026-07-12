@@ -181,6 +181,20 @@ describe("authz — orders", () => {
     expect(res.statusCode).toBe(403);
     expect(res.json().error.code).toBe("FORBIDDEN");
   });
+
+  it("D (role-permitted status) cannot skip the transition table → 400 INVALID_TRANSITION", async () => {
+    // 'out_for_delivery' is a status delivery is allowed to set, but the order
+    // is still 'confirmed' (needs 'packed' first) — the transition table, not
+    // the role gate, must be what blocks this.
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/orders/${aOrderId}/status`,
+      headers: auth(D.accessToken),
+      payload: { status: "out_for_delivery" },
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe("INVALID_TRANSITION");
+  });
 });
 
 describe("authz — profile", () => {
