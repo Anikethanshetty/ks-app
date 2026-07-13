@@ -334,6 +334,35 @@
       "customerInfo": "Customer",
       "paymentMethod": "Payment",
       "deliveryAddress": "Delivery Address"
+    },
+    "payments": {
+      "title": "Pending Payments",
+      "loading": "Loading payments…",
+      "empty": "No pending payments.",
+      "error": "Couldn't load payments.",
+      "order": "Order: #{{number}}",
+      "utr": "UTR: {{utr}}",
+      "verify": "Verify",
+      "reject": "Reject",
+      "actionError": "Couldn't process payment.",
+      "confirmReject": "Reject this payment?"
+    },
+    "settings": {
+      "title": "Shop Settings",
+      "shopName": "Shop Name",
+      "upiVpa": "UPI VPA / ID",
+      "upiVpaPlaceholder": "example@upi",
+      "upiPayeeName": "UPI Payee Name",
+      "upiQrUrl": "QR Code Image URL",
+      "deliveryFeePaise": "Delivery Fee (₹)",
+      "freeDeliveryAbovePaise": "Free delivery above (₹)",
+      "codLimitPaise": "COD limit (₹)",
+      "isAcceptingOrders": "Accepting orders",
+      "save": "Save Settings",
+      "saving": "Saving…",
+      "success": "Settings saved.",
+      "error": "Couldn't save settings.",
+      "loading": "Loading settings…"
     }
   }
 }

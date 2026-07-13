@@ -256,6 +256,16 @@ export default function OrderDetailScreen() {
         {/* Actions */}
         {!statusIsFinal && (
           <View className="mx-gutter mb-8 gap-3">
+            {/* Pay Now — shown for payment_pending_verification or payment_failed */}
+            {(order.status === "payment_pending_verification" || order.status === "payment_failed") && (
+              <Link href={`/customer/pay/${order.id}`} asChild>
+                <Pressable className="items-center rounded-chip bg-brass py-3 active:opacity-80">
+                  <Text className="font-anek-semibold text-body text-paper">
+                    {t("customer.checkout.upi")}
+                  </Text>
+                </Pressable>
+              </Link>
+            )}
             <Link href="../" asChild>
               <Pressable className="items-center rounded-chip bg-enamel py-3 active:opacity-80">
                 <Text className="font-anek-semibold text-body text-paper">

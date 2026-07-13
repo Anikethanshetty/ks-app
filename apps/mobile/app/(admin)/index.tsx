@@ -101,10 +101,15 @@ export default function AdminInventoryScreen() {
   return (
     <SafeAreaView className="flex-1 bg-paper">
       <View className="flex-row items-center justify-between px-gutter pt-2">
-        <Text className="font-anek-semibold text-h1 text-enamel">
+  <Text className="font-anek-semibold text-h1 text-enamel">
           {t("admin.inventory.title")}
         </Text>
         <View className="flex-row items-center gap-2">
+          <Link href="/admin/payments" asChild>
+            <Pressable className="rounded-chip bg-turmeric-tint px-3 py-1.5 active:opacity-70">
+              <Text className="font-anek-medium text-caption-xs text-enamel">{t("admin.payments.title")}</Text>
+            </Pressable>
+          </Link>
           <Link href="/admin/orders" asChild>
             <Pressable className="rounded-chip bg-surface border border-ruled px-3 py-1.5 active:opacity-70">
               <Text className="font-anek-medium text-caption text-enamel">{t("admin.orders.title")}</Text>
@@ -113,6 +118,11 @@ export default function AdminInventoryScreen() {
           <Link href="/admin/inventory/product/new" asChild>
             <Pressable className="rounded-chip bg-brass-tint px-3 py-1.5">
               <Text className="font-anek-medium text-caption text-enamel">{t("admin.inventory.addProduct")}</Text>
+            </Pressable>
+          </Link>
+          <Link href="/admin/settings" asChild>
+            <Pressable className="rounded-chip bg-surface border border-ruled px-3 py-1.5 active:opacity-70">
+              <Text className="font-anek-medium text-caption-xs text-ink-soft">⚙️</Text>
             </Pressable>
           </Link>
           <SignOutButton />

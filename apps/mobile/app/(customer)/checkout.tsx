@@ -167,6 +167,7 @@ export default function CheckoutScreen() {
   const items = useCartStore((s) => s.items);
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "upi">("cod");
 
   // Fetch addresses
   const addressesQuery = useQuery({
@@ -198,11 +199,15 @@ export default function CheckoutScreen() {
     mutationFn: () =>
       orderApi.place({
         addressId: selectedAddressId!,
-        paymentMethod: "cod",
+        paymentMethod,
       }),
     onSuccess: (order) => {
       fetchCart(); // Refresh cart (now empty)
-      router.replace(`/customer/order/${order.id}`);
+      if (paymentMethod === "upi") {
+        router.replace(`/customer/pay/${order.id}`);
+      } else {
+        router.replace(`/customer/order/${order.id}`);
+      }
     },
     onError: (err: any) => {
       const code = err?.code ?? "INTERNAL_ERROR";
@@ -219,7 +224,7 @@ export default function CheckoutScreen() {
     },
   });
 
-  const canPlace = !!selectedAddressId && preview && !preview.codExceeded && preview.isAcceptingOrders && preview.items.every((i) => i.inStock);
+  const canPlace = !!selectedAddressId && preview && !preview.codExceeded && preview.isAcceptingOrders && preview.items.every((i) => i.inStock) && !(paymentMethod === "upi" && preview.codExceeded);
 
   return (
     <SafeAreaView className="flex-1 bg-paper">
@@ -260,6 +265,52 @@ export default function CheckoutScreen() {
           {previewQuery.isError && !previewQuery.isFetching && (
             <View className="items-center justify-center py-8">
               <Text className="font-anek text-body text-chilli">{t("customer.checkout.error")}</Text>
+            </View>
+          )}
+
+          {/* Payment method selector */}
+          {preview && (
+            <View className="mb-6">
+              <Text className="mb-3 font-anek-semibold text-h2 text-ink">
+                {t("customer.checkout.paymentMethod")}
+              </Text>
+              <View className="flex-row gap-3">
+                <Pressable
+                  onPress={() => setPaymentMethod("cod")}
+                  className={`flex-1 rounded-card border p-4 active:opacity-70 ${
+                    paymentMethod === "cod"
+                      ? "border-brass bg-brass-tint"
+                      : "border-ruled bg-surface"
+                  }`}
+                >
+                  <Text className="mb-1 text-center text-2xl">💵</Text>
+                  <Text
+                    className={`text-center font-anek-medium text-caption ${
+                      paymentMethod === "cod" ? "text-enamel" : "text-ink"
+                    }`}
+                  >
+                    {t("customer.checkout.cod")}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setPaymentMethod("upi")}
+                  disabled={!!preview?.codExceeded}
+                  className={`flex-1 rounded-card border p-4 active:opacity-70 ${
+                    paymentMethod === "upi"
+                      ? "border-brass bg-brass-tint"
+                      : "border-ruled bg-surface"
+                  } ${preview?.codExceeded ? "opacity-50" : ""}`}
+                >
+                  <Text className="mb-1 text-center text-2xl">📱</Text>
+                  <Text
+                    className={`text-center font-anek-medium text-caption ${
+                      paymentMethod === "upi" ? "text-enamel" : "text-ink"
+                    }`}
+                  >
+                    {t("customer.checkout.upi")}
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           )}
 

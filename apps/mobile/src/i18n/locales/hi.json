@@ -108,7 +108,7 @@
       "deleteError": "पता हटाया नहीं जा सका।",
       "makeDefault": "डिफ़ॉल्ट के रूप में सेट करें"
     },
-    "checkout": {
+"checkout": {
       "title": "चेकआउट",
       "selectAddress": "डिलीवरी पता",
       "addAddress": "+ नया जोड़ें",
@@ -130,7 +130,37 @@
       "outOfStockItems": "कुछ आइटम स्टॉक में नहीं हैं।",
       "shopClosed": "दुकान अभी ऑर्डर स्वीकार नहीं कर रही है।",
       "invalidAddress": "कृपया एक मान्य डिलीवरी पता चुनें।",
-      "emptyCart": "आपकी कार्ट खाली है।"
+      "emptyCart": "आपकी कार्ट खाली है।",
+      "upi": "UPI से भुगतान करें",
+      "cod": "नकद भुगतान"
+    },
+    "payment": {
+      "title": "UPI से भुगतान करें",
+      "scanToPay": "स्कैन करके भुगतान करें",
+      "upiId": "UPI ID",
+      "copyUpiId": "कॉपी करें",
+      "copied": "कॉपी हुआ!",
+      "amount": "राशि",
+      "payee": "प्राप्तकर्ता",
+      "orderRef": "ऑर्डर: {{number}}",
+      "payWith": "इससे भुगतान करें",
+      "gpay": "Google Pay",
+      "phonepe": "PhonePe",
+      "paytm": "Paytm",
+      "otherApps": "अन्य UPI ऐप",
+      "enterUtr": "UPI रेफरेंस (UTR) दर्ज करें",
+      "utrPlaceholder": "12-अंकों का UTR नंबर",
+      "utrHint": "अपने UPI ऐप के लेन-देन इतिहास में पाएँ",
+      "uploadProof": "भुगतान स्क्रीनशॉट अपलोड करें (वैकल्पिक)",
+      "submitPayment": "मैंने भुगतान कर दिया है",
+      "submitting": "सत्यापित किया जा रहा है…",
+      "success": "भुगतान जमा हो गया!",
+      "successMessage": "आपके भुगतान की पुष्टि की जा रही है। जल्द ही पुष्टि मिल जाएगी।",
+      "error": "भुगतान जमा नहीं किया जा सका।",
+      "payCashInstead": "नकद भुगतान करें",
+      "pendingTitle": "भुगतान लंबित",
+      "pendingMessage": "आपके भुगतान की पुष्टि की जा रही है। इसमें आमतौर पर कुछ मिनट लगते हैं।",
+      "expireWarning": "अवैतनिक ऑर्डर 60 मिनट बाद रद्द कर दिए जाते हैं।"
     },
     "orders": {
       "title": "मेरे ऑर्डर",
@@ -304,6 +334,35 @@
       "customerInfo": "ग्राहक",
       "paymentMethod": "भुगतान",
       "deliveryAddress": "डिलीवरी पता"
+    },
+    "payments": {
+      "title": "लंबित भुगतान",
+      "loading": "भुगतान लोड हो रहे हैं…",
+      "empty": "कोई लंबित भुगतान नहीं।",
+      "error": "भुगतान लोड नहीं किए जा सके।",
+      "order": "ऑर्डर: #{{number}}",
+      "utr": "UTR: {{utr}}",
+      "verify": "सत्यापित करें",
+      "reject": "अस्वीकार करें",
+      "actionError": "भुगतान प्रक्रिया पूरी नहीं की जा सकी।",
+      "confirmReject": "इस भुगतान को अस्वीकार करें?"
+    },
+    "settings": {
+      "title": "दुकान सेटिंग्स",
+      "shopName": "दुकान का नाम",
+      "upiVpa": "UPI VPA / ID",
+      "upiVpaPlaceholder": "example@upi",
+      "upiPayeeName": "UPI प्राप्तकर्ता का नाम",
+      "upiQrUrl": "QR कोड इमेज URL",
+      "deliveryFeePaise": "डिलीवरी शुल्क (₹)",
+      "freeDeliveryAbovePaise": "इससे ऊपर के ऑर्डर पर मुफ़्त डिलीवरी (₹)",
+      "codLimitPaise": "COD सीमा (₹)",
+      "isAcceptingOrders": "ऑर्डर स्वीकार कर रहा है",
+      "save": "सेटिंग्स सहेजें",
+      "saving": "सहेजा जा रहा है…",
+      "success": "सेटिंग्स सहेजी गईं।",
+      "error": "सेटिंग्स सहेजी नहीं जा सकीं।",
+      "loading": "सेटिंग्स लोड हो रही हैं…"
     }
   }
 }
