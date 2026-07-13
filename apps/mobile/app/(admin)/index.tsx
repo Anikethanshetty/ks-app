@@ -1,12 +1,16 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import type { InventoryTab, InventoryVariantDto } from "@kss/shared";
 import { inventoryApi } from "@/lib/endpoints";
+import { useSocket } from "@/lib/socket";
 import { SignOutButton } from "@/components/SignOutButton";
+import { useSession } from "@/lib/session";
+
+// Logged-in guard — session is always available in authenticated routes.
 
 const TABS: InventoryTab[] = ["all", "low_stock", "out_of_stock"];
 const PAGE_SIZE = 50;
@@ -68,9 +72,21 @@ export default function AdminInventoryScreen() {
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage.items.length === PAGE_SIZE ? lastPage.page + 1 : undefined,
-    // Socket.IO push lands in T2.6; a short poll keeps this "realtime enough" until then.
-    refetchInterval: 15_000,
+    // Socket.IO subscription (T2.6) invalidates query on inventory:updated events.
+    refetchInterval: false,
   });
+
+  const queryClient = useQueryClient();
+  const { user } = useSession();
+  const { subscribe } = useSocket(!!user && user.role === "admin");
+
+  // Socket.IO subscription to replace 15s polling (T2.6)
+  useEffect(() => {
+    const unsub = subscribe("order:new", () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "inventory"] });
+    });
+    return () => unsub();
+  }, [subscribe]);
 
   const items = useMemo(() => query.data?.pages.flatMap((p) => p.items) ?? [], [query.data]);
   const counts = query.data?.pages[0]?.counts;

@@ -228,7 +228,7 @@ export const orderService = {
 
     // ── commit boundary ── side effects only after the transaction commits.
     const dto = await loadOrderDto(orderId);
-    events.orderPlaced(dto.id, dto.status);
+    events.orderPlaced(dto.id, dto.status, actor.userId);
     if (idempotencyKey) await saveIdempotentResponse("placeOrder", idempotencyKey, dto);
     return dto;
   },
@@ -339,7 +339,7 @@ export const orderService = {
     );
 
     const dto = await loadOrderDto(order.id);
-    events.orderStatusChanged(dto.id, dto.status);
+    events.orderStatusChanged(dto.id, dto.status, order.userId);
     if (newStatus === "delivered") events.invoiceRequested(dto.id);
     return dto;
   },

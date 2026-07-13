@@ -2,6 +2,7 @@ import { env } from "./config/env.js";
 import { logger } from "./lib/logger.js";
 import { pool } from "./lib/db.js";
 import { redis } from "./lib/redis.js";
+import { closeSocketIO } from "./lib/socket.js";
 import { buildServer } from "./server.js";
 
 async function main(): Promise<void> {
@@ -13,6 +14,7 @@ async function main(): Promise<void> {
   const shutdown = async (signal: string): Promise<void> => {
     logger.info(`${signal} received — shutting down`);
     try {
+      await closeSocketIO();
       await app.close();
       await pool.end();
       redis.disconnect();

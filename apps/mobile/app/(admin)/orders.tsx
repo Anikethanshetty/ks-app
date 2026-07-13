@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -9,9 +9,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { adminOrderApi } from "@/lib/endpoints";
+import { useSocket } from "@/lib/socket";
+import { useSession } from "@/lib/session";
 
 type OrderTab = "new" | "confirmed" | "packed" | "delivering" | "delivered" | "cancelled" | "pending_payment";
 
@@ -62,15 +64,33 @@ function statusColor(status: string): string {
 
 export default function AdminOrderBoardScreen() {
   const { t } = useTranslation();
+  const { user } = useSession();
+  const queryClient = useQueryClient();
+  const { subscribe } = useSocket(!!user && user.role === "admin");
   const [tab, setTab] = useState<OrderTab>("new");
+
+  // Socket.IO subscription: invalidate orders query + refetch counts on new order or status change
+  useEffect(() => {
+    const unsubNew = subscribe("order:new", () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "orders", "counts"] });
+    });
+    const unsubStatus = subscribe("order:status_changed", () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "orders", "counts"] });
+    });
+    return () => {
+      unsubNew();
+      unsubStatus();
+    };
+  }, [subscribe, queryClient]);
 
   const activeTab = TABS.find((t) => t.key === tab);
 
-  // Fetch order counts for badges
+  // Fetch order counts for badges — no polling, Socket.IO invalidates
   const countsQuery = useQuery({
     queryKey: ["admin", "orders", "counts"],
     queryFn: () => adminOrderApi.counts(),
-    refetchInterval: 30_000,
   });
 
   // Fetch orders filtered by status

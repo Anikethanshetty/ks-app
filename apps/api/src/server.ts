@@ -15,6 +15,7 @@ import { corsOrigins, isProduction } from "./config/env.js";
 import { logger } from "./lib/logger.js";
 import { redis } from "./lib/redis.js";
 import { registerErrorHandler } from "./middleware/errorHandler.js";
+import { initSocketIO } from "./lib/socket.js";
 import { healthRoutes } from "./routes/health.routes.js";
 import { authRoutes } from "./routes/auth.routes.js";
 import { meRoutes } from "./routes/me.routes.js";
@@ -24,6 +25,7 @@ import { productRoutes } from "./routes/product.routes.js";
 import { catalogueRoutes } from "./routes/catalogue.routes.js";
 import { cartRoutes } from "./routes/cart.routes.js";
 import { addressRoutes } from "./routes/address.routes.js";
+import { deviceTokenRoutes } from "./routes/device-token.routes.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -64,6 +66,9 @@ export async function buildServer() {
 
   registerErrorHandler(app);
 
+  // ── Socket.IO gateway (T2.6) — attaches to Fastify's HTTP server. ──
+  initSocketIO(app);
+
   // Ops routes live at the root; the versioned API mounts under /api/v1.
   await app.register(healthRoutes);
   await app.register(
@@ -77,6 +82,7 @@ export async function buildServer() {
       await v1.register(catalogueRoutes);
       await v1.register(cartRoutes);
       await v1.register(addressRoutes);
+      await v1.register(deviceTokenRoutes);
     },
     { prefix: "/api/v1" },
   );
