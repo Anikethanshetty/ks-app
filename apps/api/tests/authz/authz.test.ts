@@ -1373,3 +1373,225 @@ CsvTest Dal,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಬೇಳೆ,सीएस�
     expect(res.json().variants[0].sku).toBe("SKU-AUTHZ-VAR");
   });
 });
+
+describe("authz — payments (Phase 3)", () => {
+  let upiOrderId: string;
+  let paymentId: string;
+
+  beforeAll(async () => {
+    // Place a UPI order for A so we can test submit-payment
+    const variant = await prisma.productVariant.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: "asc" },
+    });
+    const address = await prisma.address.findFirst({
+      where: { userId: A.userId },
+      orderBy: { createdAt: "desc" },
+    });
+    const placed = await app.inject({
+      method: "POST",
+      url: `${V1}/orders`,
+      headers: auth(A.accessToken),
+      payload: {
+        addressId: address!.id,
+        paymentMethod: "upi",
+        items: [{ variantId: variant!.id, quantity: 1 }],
+      },
+    });
+    upiOrderId = placed.json().id;
+  }, 30_000);
+
+  // ── submit-payment ──
+
+  it("A (order owner) can submit UPI payment (control)", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/orders/${upiOrderId}/submit-payment`,
+      headers: auth(A.accessToken),
+      payload: { upiReference: "ABCD12345678" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().method).toBe("upi");
+    expect(res.json().status).toBe("pending_verification");
+    expect(res.json().orderId).toBe(upiOrderId);
+    paymentId = res.json().id;
+  });
+
+  it("B cannot submit payment on A's order → 404", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/orders/${upiOrderId}/submit-payment`,
+      headers: auth(B.accessToken),
+      payload: { upiReference: "DCBA12345678" },
+    });
+    expect(res.statusCode).toBe(404);
+    expect(res.json().error.code).toBe("NOT_FOUND");
+  });
+
+  it("admin cannot submit payment (customer-only) → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/orders/${upiOrderId}/submit-payment`,
+      headers: auth(ADMIN.accessToken),
+      payload: { upiReference: "EFGH12345678" },
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("delivery cannot submit payment → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/orders/${upiOrderId}/submit-payment`,
+      headers: auth(D.accessToken),
+      payload: { upiReference: "IJKL12345678" },
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("no token on submit-payment → 401", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/orders/${upiOrderId}/submit-payment`,
+      payload: { upiReference: "MNOP12345678" },
+    });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("duplicate submit-payment → 409 PAYMENT_ALREADY_SUBMITTED", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/orders/${upiOrderId}/submit-payment`,
+      headers: auth(A.accessToken),
+      payload: { upiReference: "AAAA11111111" },
+    });
+    expect(res.statusCode).toBe(409);
+    expect(res.json().error.code).toBe("PAYMENT_ALREADY_SUBMITTED");
+  });
+
+  // ── admin payments list ──
+
+  it("admin can list pending payments (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/payments`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().items.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("customer cannot list payments → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/payments`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("delivery cannot list payments → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/payments`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("no token on admin payments → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/admin/payments` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  // ── admin verify/reject payment ──
+
+  it("admin can verify payment (control)", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/payments/${paymentId}/verify`,
+      headers: auth(ADMIN.accessToken),
+      payload: { action: "verify" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().status).toBe("verified");
+  });
+
+  it("customer cannot verify payment → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/payments/${paymentId}/verify`,
+      headers: auth(A.accessToken),
+      payload: { action: "verify" },
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("delivery cannot verify payment → 403", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/payments/${paymentId}/verify`,
+      headers: auth(D.accessToken),
+      payload: { action: "verify" },
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("no token on verify payment → 401", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: `${V1}/admin/payments/${paymentId}/verify`,
+      payload: { action: "verify" },
+    });
+    expect(res.statusCode).toBe(401);
+  });
+
+  // ── PATCH /admin/shop-settings ──
+
+  it("admin can PATCH shop settings (control)", async () => {
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/admin/shop-settings`,
+      headers: auth(ADMIN.accessToken),
+      payload: { shopName: "Authz Update" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().ok).toBe(true);
+  });
+
+  it("customer cannot PATCH shop settings → 403", async () => {
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/admin/shop-settings`,
+      headers: auth(A.accessToken),
+      payload: { shopName: "Hacked" },
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("delivery cannot PATCH shop settings → 403", async () => {
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/admin/shop-settings`,
+      headers: auth(D.accessToken),
+      payload: { shopName: "Hacked" },
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("no token on admin shop-settings → 401", async () => {
+    const res = await app.inject({
+      method: "PATCH",
+      url: `${V1}/admin/shop-settings`,
+      payload: { shopName: "Hacked" },
+    });
+    expect(res.statusCode).toBe(401);
+  });
+});
