@@ -27,17 +27,20 @@ UI/UX brief, backend-schema, implementation-plan). Build order = implementation-
 | T2.4 | 📋 Order screens — My Orders list (C11) with infinite scroll + paginated `GET /orders`, status badges (colored per status), order number + total + date display. Order detail/success screen (C10/C12) enhanced with 🎉 success header, full status timeline (C12) with colored dot icons, item breakdown, bill summary (subtotal, delivery fee, total), `StatusEventDto` in shared schemas, `statusEvents` included in `OrderDto` API responses. Customer home header now has 📋 My Orders link. |
 | T2.5 | 🧑‍💼 Admin order board (A01) — `GET /admin/orders` (status-filtered, paginated, admin-only), `GET /admin/orders/counts` (count per status for tab badges). Mobile: 7-tab order board (New/Pending Payment/Confirmed/Packed/Out for Delivery/Delivered/Cancelled) with count badges and infinite scroll. Admin order detail (A02) with Customer Info section, Confirm/Pack/OutForDelivery/MarkDelivered/Cancel action buttons, cancel reason text input, status timeline. Navigation from admin home screen. Authz tests: 8 new (admin 200, customer 403, delivery 403, no token 401, status filter, counts). Typecheck clean across all 3 packages. |
 | T2.6 | 🔌 Realtime + push — Socket.IO gateway (`apps/api/src/lib/socket.ts`) with JWT auth middleware (HMAC-SHA256, constant-time compare), Redis pub/sub adapter for multi-instance scaling, server-decided rooms (`user:{userId}`, `admin`, `order:{orderId}`). Events (`apps/api/src/lib/events.ts`) wired to emit real Socket.IO events + Expo push notifications (`apps/api/src/lib/push.ts`) through `expo-server-sdk`. Device token registration (`POST/DELETE /device-tokens`) with ownership-scoped upsert/delete. Mobile socket client (`apps/mobile/src/lib/socket.ts`) — `useSocket(enabled)` hook with auth, reconnection, and `subscribe(event, handler)` for realtime subscriptions. Admin screens: inventory list and order board now use Socket.IO subscriptions (subscribing to `order:new` and `order:status_changed`) instead of 15s/30s polling. Server shutdown wired to close Socket.IO gracefully. Authz tests: 4 new for device token endpoints (register control, no token 401, unregister control, cross-user isolation). |
+| T3.1–T3.4 (API) | 💳 Payment API layer — `PaymentDto`, `SubmitPaymentBody`, `VerifyPaymentBody` schemas. `POST /orders/:id/submit-payment` (customer submits UPI payment with UTR, creates `payments` row with `pending_verification`, transitions order to `payment_pending_verification`). `GET /admin/payments` (lists pending payments, paginated). `POST /admin/payments/:id/verify` (verify → order `confirmed`, reject → `payment_failed` status event). `PATCH /admin/shop-settings` (update UPI VPA, payee name, QR URL, delivery fee, order acceptance). Added `upiQrUrl` to `ShopSettingsDto`. `toPaymentDto` mapper. Payment i18n keys (en). Registered `paymentRoutes` in server. |
 
-**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`). **T1.5 done**, committed (`58930b6`). **T1.6 done**, committed (`bdab3f3`). **T2.1 done**, committed (`db443a5`). **T2.2 done**, committed (`61070dd`). **T2.3 done**, committed (next). **T2.4 done**, committed (next). **T2.5 done**, committed (next). **T2.6 done**, committed (next).
+**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`). **T1.5 done**, committed (`58930b6`). **T1.6 done**, committed (`bdab3f3`). **T2.1 done**, committed (`db443a5`). **T2.2 done**, committed (`61070dd`). **T2.3 done**, committed (next). **T2.4 done**, committed (next). **T2.5 done**, committed (next). **T2.6 done**, committed (next). **T3.1–T3.4 (API)** done (in progress).
 
 ## Next
 
-**Phase 3 — Payments** (`06-implementation-plan.md`), next up:
-- **T3.1** — Admin settings (A14): UPI VPA + QR image upload to the `shop-assets/` R2 prefix
-- **T3.2** — UPI payment screen (C09) with QR hero, UPI ID with copy, GPay/PhonePe/Paytm deep links
-- **T3.3** — "I have paid" → creates a `payments` row with `pending_verification`
-- **T3.4** — Admin pending payments queue (A04) with Verify / Reject
-- **T3.5** — Reject path + "Pay cash instead" fallback + `expireUnpaidOrders` stock restore
+**Phase 3 — Payments** (`06-implementation-plan.md`), next up (mobile screens needed):
+- **T3.1** — Admin settings screen (A14): UPI VPA + QR URL editor — API done, mobile screen needed
+- **T3.2** — UPI payment screen (C09) with QR hero, UPI ID copy, GPay/PhonePe/Paytm deep links — API done, mobile screen needed
+- **T3.4** — Admin pending payments queue screen (A04) with Verify/Reject buttons — API done, mobile screen needed
+- **T3.5** — Reject path + "Pay cash instead" fallback on C09
+
+**Still outstanding (no code started):**
+- **T3.5** — `expireUnpaidOrders` BullMQ job (stock restore after 60 min)
 
 
 Left for T0.5 (needs a device/emulator, not blocking): drive the 3 dev numbers
