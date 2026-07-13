@@ -3,17 +3,23 @@ import { logger } from "./lib/logger.js";
 import { pool } from "./lib/db.js";
 import { redis } from "./lib/redis.js";
 import { closeSocketIO } from "./lib/socket.js";
+import { initQueue, closeQueue } from "./lib/queue.js";
 import { buildServer } from "./server.js";
 
 async function main(): Promise<void> {
   const app = await buildServer();
 
   await app.listen({ port: env.PORT, host: "0.0.0.0" });
+
+  // ── Background job queue (BullMQ) ──
+  await initQueue();
+
   logger.info(`API listening on :${env.PORT} (${env.NODE_ENV})`);
 
   const shutdown = async (signal: string): Promise<void> => {
     logger.info(`${signal} received — shutting down`);
     try {
+      await closeQueue();
       await closeSocketIO();
       await app.close();
       await pool.end();
