@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -64,6 +64,13 @@ export default function SearchScreen() {
   const [queryText, setQueryText] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Clear the debounce timer on unmount so it doesn't set state on a dead component.
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const handleChangeText = useCallback((text: string) => {
     setQueryText(text);

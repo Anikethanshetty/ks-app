@@ -6,7 +6,10 @@
       "Bash(rtk find *)",
       "Bash(rtk proxy *)",
       "Bash(rtk grep *)",
-      "Bash(rtk read *)"
+      "Bash(rtk read *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk docker *)",
+      "Bash(rtk curl *)"
     ]
   }
 }
