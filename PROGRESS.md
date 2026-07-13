@@ -33,14 +33,13 @@ UI/UX brief, backend-schema, implementation-plan). Build order = implementation-
 | — | — Checkout (C08) now supports UPI payment method selector (COD/UPI cards). UPI orders navigate to `/customer/pay/[id]`. Order detail (C12) has "Pay Now" button for `payment_pending_verification` and `payment_failed` orders |
 | — | — Full kn/hi/en i18n coverage for payment screens and admin settings |
 | — | — Authz tests (14 new): submit-payment control + cross-customer 404 + admin/delivery 403 + no token 401 + duplicate 409; admin payments list + verify + shop-settings control + admin/delivery 403 + no token 401 |
+| T3.5 | ⏰ `expireUnpaidOrders` BullMQ job — BullMQ queue + worker with shared Redis connection, repeatable job scheduler (every 5 min). Queries orders with `payment_pending_verification` >60 min old (excludes orders with pending payments), cancels each in a transaction: status event, order cancellation, stock restore, inventory movements. Post-commit Socket.IO + push notification via `events.orderStatusChanged`. Per-order error handling. Wired into server startup + shutdown. |
 
-**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`). **T1.5 done**, committed (`58930b6`). **T1.6 done**, committed (`bdab3f3`). **T2.1 done**, committed (`db443a5`). **T2.2 done**, committed (`61070dd`). **T2.3 done**, committed (next). **T2.4 done**, committed (next). **T2.5 done**, committed (next). **T2.6 done**, committed (next). **T3.1–T3.4 done**, committed (next).
+**Phase 0 done** (T0.1–T0.6), committed (`1ba72ee`). **T1.1 done**, committed (`a011ff0`). **T1.2 done**, committed (`eb0255d`). **T1.3 done**, committed (`b0255ce`). **T1.4 done**, committed (`88248a2`). **T1.5 done**, committed (`58930b6`). **T1.6 done**, committed (`bdab3f3`). **T2.1 done**, committed (`db443a5`). **T2.2 done**, committed (`61070dd`). **T2.3 done**, committed (next). **T2.4 done**, committed (next). **T2.5 done**, committed (next). **T2.6 done**, committed (next). **T3.1–T3.4 done**, committed (next). **T3.5 done**, committed (`6d9809b`).
 
 ## Next
 
-**Phase 3 — Payments**: T3.5 remaining:
-- **T3.5** — `expireUnpaidOrders` BullMQ job (stock restore after 60 min unpaid)
-
+**Phase 3 done** — Payments end-to-end. Next up: Phase 4 — Delivery management.
 
 Left for T0.5 (needs a device/emulator, not blocking): drive the 3 dev numbers
 (`+919000000010/20/30`, dev OTP `000000`) → 3 home screens and confirm force-quit
