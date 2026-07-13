@@ -133,12 +133,31 @@
       "emptyCart": "Your cart is empty."
     },
     "orders": {
-      "placed": "Order placed!",
+      "title": "My Orders",
+      "placed": "Order Placed!",
       "continueShopping": "Continue Shopping",
       "status": "Status",
+      "orderNumber": "Order #{{number}}",
       "loading": "Loading order…",
+      "loadingList": "Loading orders…",
       "error": "Couldn't load order.",
-      "noOrders": "No orders yet."
+      "noOrders": "No orders yet.",
+      "empty": "You haven't placed any orders yet.",
+      "emptyCTA": "Browse Products",
+      "placedAt": "Placed on {{date}}",
+      "timeline": "Order Timeline",
+      "statusPlaced": "Order Placed",
+      "statusPaymentPendingVerification": "Payment Pending",
+      "statusPaymentFailed": "Payment Failed",
+      "statusConfirmed": "Confirmed",
+      "statusPacked": "Packed",
+      "statusOutForDelivery": "Out for Delivery",
+      "statusDelivered": "Delivered",
+      "statusCancelled": "Cancelled",
+      "statusReturned": "Returned",
+      "cancelReason": "Reason: {{reason}}",
+      "total": "Total",
+      "myOrders": "My Orders"
     }
   },
   "common": {
@@ -148,7 +167,12 @@
     "loading": "Loading…",
     "edit": "Edit",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "close": "Close",
+    "view": "View",
+    "confirm": "Confirm",
+    "pack": "Pack",
+    "deliver": "Mark Delivered"
   },
   "admin": {
     "inventory": {
@@ -247,6 +271,39 @@
       "error": "Couldn't parse the CSV.",
       "empty": "Paste CSV data above and tap Preview to see results.",
       "parseError": "CSV parsing failed. Check the format and try again."
+    },
+    "orders": {
+      "title": "Orders",
+      "tabNew": "New",
+      "tabConfirmed": "Confirmed",
+      "tabPacked": "Packed",
+      "tabDelivering": "Out for Delivery",
+      "tabDelivered": "Delivered",
+      "tabCancelled": "Cancelled",
+      "tabPendingPayment": "Pending Payment",
+      "allOrders": "All Orders",
+      "orderNumber": "#{{number}}",
+      "customer": "Customer",
+      "items": "Items",
+      "totalAmount": "₹{{amount}}",
+      "placedAt": "{{date}}",
+      "loading": "Loading orders…",
+      "empty": "No orders in this tab.",
+      "error": "Couldn't load orders.",
+      "confirmOrder": "Confirm",
+      "packOrder": "Pack",
+      "markOutForDelivery": "Mark Out for Delivery",
+      "markDelivered": "Mark Delivered",
+      "cancelOrder": "Cancel Order",
+      "cancelNote": "Reason for cancellation",
+      "cancelConfirm": "Cancel Order",
+      "actionSuccess": "Status updated.",
+      "actionError": "Couldn't update status.",
+      "detail": "Order Details",
+      "orderStatus": "Status: {{status}}",
+      "customerInfo": "Customer",
+      "paymentMethod": "Payment",
+      "deliveryAddress": "Delivery Address"
     }
   }
 }

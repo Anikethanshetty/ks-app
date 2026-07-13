@@ -133,12 +133,31 @@
       "emptyCart": "ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿಯಾಗಿದೆ."
     },
     "orders": {
+      "title": "ನನ್ನ ಆರ್ಡರ್‌ಗಳು",
       "placed": "ಆರ್ಡರ್ ಆಗಿದೆ!",
       "continueShopping": "ಶಾಪಿಂಗ್ ಮುಂದುವರಿಸಿ",
       "status": "ಸ್ಥಿತಿ",
+      "orderNumber": "ಆರ್ಡರ್ #{{number}}",
       "loading": "ಆರ್ಡರ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+      "loadingList": "ಆರ್ಡರ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…",
       "error": "ಆರ್ಡರ್ ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
-      "noOrders": "ಇನ್ನೂ ಯಾವುದೇ ಆರ್ಡರ್‌ಗಳಿಲ್ಲ."
+      "noOrders": "ಇನ್ನೂ ಯಾವುದೇ ಆರ್ಡರ್‌ಗಳಿಲ್ಲ.",
+      "empty": "ನೀವು ಇನ್ನೂ ಯಾವುದೇ ಆರ್ಡರ್‌ಗಳನ್ನು ಮಾಡಿಲ್ಲ.",
+      "emptyCTA": "ಉತ್ಪನ್ನಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ",
+      "placedAt": "{{date}} ರಂದು ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ",
+      "timeline": "ಆರ್ಡರ್ ಟೈಮ್‌ಲೈನ್",
+      "statusPlaced": "ಆರ್ಡರ್ ಮಾಡಲಾಗಿದೆ",
+      "statusPaymentPendingVerification": "ಪಾವತಿ ಬಾಕಿಯಿದೆ",
+      "statusPaymentFailed": "ಪಾವತಿ ವಿಫಲವಾಗಿದೆ",
+      "statusConfirmed": "ದೃಢಪಡಿಸಲಾಗಿದೆ",
+      "statusPacked": "ಪ್ಯಾಕ್ ಮಾಡಲಾಗಿದೆ",
+      "statusOutForDelivery": "ವಿತರಣೆಗಾಗಿ ಹೊರಟಿದೆ",
+      "statusDelivered": "ವಿತರಿಸಲಾಗಿದೆ",
+      "statusCancelled": "ರದ್ದುಮಾಡಲಾಗಿದೆ",
+      "statusReturned": "ಹಿಂತಿರುಗಿಸಲಾಗಿದೆ",
+      "cancelReason": "ಕಾರಣ: {{reason}}",
+      "total": "ಒಟ್ಟು",
+      "myOrders": "ನನ್ನ ಆರ್ಡರ್‌ಗಳು"
     }
   },
   "common": {
@@ -148,7 +167,12 @@
     "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
     "edit": "ಸಂಪಾದಿಸಿ",
     "cancel": "ರದ್ದುಮಾಡಿ",
-    "delete": "ಅಳಿಸಿ"
+    "delete": "ಅಳಿಸಿ",
+    "close": "ಮುಚ್ಚಿ",
+    "view": "ವೀಕ್ಷಿಸಿ",
+    "confirm": "ದೃಢಪಡಿಸಿ",
+    "pack": "ಪ್ಯಾಕ್ ಮಾಡಿ",
+    "deliver": "ವಿತರಿಸಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ"
   },
   "admin": {
     "inventory": {
@@ -247,6 +271,39 @@
       "error": "CSV ಅನ್ನು ಪಾರ್ಸ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
       "empty": "ಮೇಲೆ CSV ಡೇಟಾವನ್ನು ಅಂಟಿಸಿ ಮತ್ತು ಫಲಿತಾಂಶಗಳನ್ನು ನೋಡಲು ಪೂರ್ವವೀಕ್ಷಣೆ ಟ್ಯಾಪ್ ಮಾಡಿ.",
       "parseError": "CSV ಪಾರ್ಸಿಂಗ್ ವಿಫಲವಾಗಿದೆ. ಫಾರ್ಮ್ಯಾಟ್ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+    },
+    "orders": {
+      "title": "ಆರ್ಡರ್‌ಗಳು",
+      "tabNew": "ಹೊಸ",
+      "tabConfirmed": "ದೃಢಪಟ್ಟ",
+      "tabPacked": "ಪ್ಯಾಕ್ ಮಾಡಲಾಗಿದೆ",
+      "tabDelivering": "ವಿತರಣೆಗಾಗಿ ಹೊರಟಿದೆ",
+      "tabDelivered": "ವಿತರಿಸಲಾಗಿದೆ",
+      "tabCancelled": "ರದ್ದುಮಾಡಲಾಗಿದೆ",
+      "tabPendingPayment": "ಪಾವತಿ ಬಾಕಿ",
+      "allOrders": "ಎಲ್ಲಾ ಆರ್ಡರ್‌ಗಳು",
+      "orderNumber": "#{{number}}",
+      "customer": "ಗ್ರಾಹಕ",
+      "items": "ವಸ್ತುಗಳು",
+      "totalAmount": "₹{{amount}}",
+      "placedAt": "{{date}}",
+      "loading": "ಆರ್ಡರ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…",
+      "empty": "ಈ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಯಾವುದೇ ಆರ್ಡರ್‌ಗಳಿಲ್ಲ.",
+      "error": "ಆರ್ಡರ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
+      "confirmOrder": "ದೃಢಪಡಿಸಿ",
+      "packOrder": "ಪ್ಯಾಕ್ ಮಾಡಿ",
+      "markOutForDelivery": "ವಿತರಣೆಗೆ ಗುರುತಿಸಿ",
+      "markDelivered": "ವಿತರಿಸಲಾಗಿದೆ ಎಂದು ಗುರುತಿಸಿ",
+      "cancelOrder": "ಆರ್ಡರ್ ರದ್ದುಮಾಡಿ",
+      "cancelNote": "ರದ್ದತಿಗೆ ಕಾರಣ",
+      "cancelConfirm": "ಆರ್ಡರ್ ರದ್ದುಮಾಡಿ",
+      "actionSuccess": "ಸ್ಥಿತಿ ನವೀಕರಿಸಲಾಗಿದೆ.",
+      "actionError": "ಸ್ಥಿತಿ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.",
+      "detail": "ಆರ್ಡರ್ ವಿವರಗಳು",
+      "orderStatus": "ಸ್ಥಿತಿ: {{status}}",
+      "customerInfo": "ಗ್ರಾಹಕ",
+      "paymentMethod": "ಪಾವತಿ",
+      "deliveryAddress": "ವಿತರಣೆ ವಿಳಾಸ"
     }
   }
 }

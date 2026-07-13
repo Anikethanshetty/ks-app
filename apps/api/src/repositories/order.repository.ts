@@ -19,7 +19,10 @@ function actorScope(actor: Actor): Prisma.OrderWhereInput {
   return {}; // admin: no extra filter
 }
 
-const withItems = { items: true } satisfies Prisma.OrderInclude;
+const withItems = {
+  items: true,
+  statusEvents: { orderBy: { createdAt: "asc" } },
+} satisfies Prisma.OrderInclude;
 
 export const orderRepository = {
   findByIdForActor(actor: Actor, orderId: string) {

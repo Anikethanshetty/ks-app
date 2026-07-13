@@ -889,6 +889,81 @@ CsvTest Dal,ಸಿಎಸ್ವಿ ಟೆಸ್ಟ್ ಬೇಳೆ,सीएस�
     expect(res.statusCode).toBe(401);
   });
 
+  // ── Admin order board (T2.5) ──
+
+  it("admin can list orders on admin order board (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().items).toBeDefined();
+  });
+
+  it("customer cannot list orders on admin board → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("delivery cannot list orders on admin board → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+    expect(res.json().error.code).toBe("FORBIDDEN");
+  });
+
+  it("no token on admin order board → 401", async () => {
+    const res = await app.inject({ method: "GET", url: `${V1}/admin/orders` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("admin can filter orders by status (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders?status=placed`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("admin can get order counts (control)", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders/counts`,
+      headers: auth(ADMIN.accessToken),
+    });
+    expect(res.statusCode).toBe(200);
+    expect(typeof res.json().placed).toBe("number");
+    expect(typeof res.json().confirmed).toBe("number");
+  });
+
+  it("customer cannot get order counts → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders/counts`,
+      headers: auth(A.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("delivery cannot get order counts → 403", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: `${V1}/admin/orders/counts`,
+      headers: auth(D.accessToken),
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
   // ── Cart (T2.1) ──
 
   it("A can add items to own cart (control)", async () => {

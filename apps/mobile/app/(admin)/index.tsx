@@ -89,6 +89,11 @@ export default function AdminInventoryScreen() {
           {t("admin.inventory.title")}
         </Text>
         <View className="flex-row items-center gap-2">
+          <Link href="/admin/orders" asChild>
+            <Pressable className="rounded-chip bg-surface border border-ruled px-3 py-1.5 active:opacity-70">
+              <Text className="font-anek-medium text-caption text-enamel">{t("admin.orders.title")}</Text>
+            </Pressable>
+          </Link>
           <Link href="/admin/inventory/product/new" asChild>
             <Pressable className="rounded-chip bg-brass-tint px-3 py-1.5">
               <Text className="font-anek-medium text-caption text-enamel">{t("admin.inventory.addProduct")}</Text>

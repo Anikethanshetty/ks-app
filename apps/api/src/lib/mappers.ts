@@ -43,12 +43,18 @@ export function toOrderDto(o: OrderWithItems): OrderDto {
       packLabel: it.packLabel,
       addedVia: it.addedVia,
     })),
+    statusEvents: o.statusEvents.map((e) => ({
+      status: e.status,
+      actorId: e.actorId,
+      note: e.note,
+      createdAt: e.createdAt.toISOString(),
+    })),
   };
 }
 
 export function toOrderSummaryDto(o: OrderWithItems): OrderSummaryDto {
-  const { items: _items, addressSnapshot: _addr, ...rest } = toOrderDto(o);
-  return rest;
+  const { items: _items, addressSnapshot: _addr, statusEvents: _events, ...rest } = toOrderDto(o);
+  return rest as OrderSummaryDto;
 }
 
 /** Raw-SQL inventory row → DTO. Stock buckets are computed here, not stored. */

@@ -48,7 +48,10 @@ type LockedVariant = {
 async function loadOrderDto(orderId: string): Promise<OrderDto> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
-    include: { items: true },
+    include: {
+      items: true,
+      statusEvents: { orderBy: { createdAt: "asc" } },
+    },
   });
   if (!order) throw new AppError("INTERNAL_ERROR", "Order vanished after write.");
   return toOrderDto(order);

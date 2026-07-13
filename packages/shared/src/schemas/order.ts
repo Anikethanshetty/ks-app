@@ -24,6 +24,15 @@ export const PlaceOrderInput = z.object({
 });
 export type PlaceOrderInput = z.infer<typeof PlaceOrderInput>;
 
+/** A status event in the order timeline. */
+export const StatusEventDto = z.object({
+  status: OrderStatus,
+  actorId: z.string().uuid().nullable(),
+  note: z.string().nullable(),
+  createdAt: z.string(),
+});
+export type StatusEventDto = z.infer<typeof StatusEventDto>;
+
 /** All money fields are integer paise on the wire (26600 = ₹266.00). */
 export const OrderItemDto = z.object({
   id: z.string().uuid(),
@@ -53,11 +62,12 @@ export const OrderDto = z.object({
   customerNote: z.string().nullable(),
   addressSnapshot: z.record(z.string(), z.unknown()),
   items: z.array(OrderItemDto),
+  statusEvents: z.array(StatusEventDto),
   placedAt: z.string(),
 });
 export type OrderDto = z.infer<typeof OrderDto>;
 
-export const OrderSummaryDto = OrderDto.omit({ items: true, addressSnapshot: true });
+export const OrderSummaryDto = OrderDto.omit({ items: true, addressSnapshot: true, statusEvents: true });
 export type OrderSummaryDto = z.infer<typeof OrderSummaryDto>;
 
 export const UpdateStatusBody = z.object({

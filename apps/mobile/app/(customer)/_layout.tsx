@@ -10,6 +10,7 @@ export default function CustomerLayout() {
       <Stack.Screen name="cart" />
       <Stack.Screen name="addresses" />
       <Stack.Screen name="checkout" />
+      <Stack.Screen name="orders" />
       <Stack.Screen name="order/[id]" />
     </Stack>
   );

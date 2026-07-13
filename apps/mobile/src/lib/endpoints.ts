@@ -207,6 +207,48 @@ export const orderApi = {
     }),
 };
 
+/** Admin order board endpoints (T2.5, A01/A02). */
+export const adminOrderApi = {
+  list: (status?: string, cursor?: string) => {
+    const params = new URLSearchParams();
+    if (status) params.set("status", status);
+    if (cursor) params.set("cursor", cursor);
+    const qs = params.toString();
+    return apiFetch(`/admin/orders${qs ? `?${qs}` : ""}`, {
+      schema: z.object({ items: z.array(z.any()), nextCursor: z.string().nullable() }),
+    });
+  },
+
+  counts: () =>
+    apiFetch("/admin/orders/counts", {
+      schema: z.object({
+        placed: z.number().int(),
+        confirmed: z.number().int(),
+        packed: z.number().int(),
+        outForDelivery: z.number().int(),
+        delivered: z.number().int(),
+        cancelled: z.number().int(),
+        paymentPendingVerification: z.number().int(),
+      }),
+    }),
+
+  get: (id: string) => apiFetch(`/orders/${id}`, { schema: OrderDto }),
+
+  updateStatus: (id: string, status: string, note?: string) =>
+    apiFetch(`/orders/${id}/status`, {
+      method: "PATCH",
+      body: { status, note },
+      schema: OrderDto,
+    }),
+
+  cancel: (id: string, reason?: string) =>
+    apiFetch(`/orders/${id}/cancel`, {
+      method: "POST",
+      body: { reason },
+      schema: OrderDto,
+    }),
+};
+
 export const productApi = {
   listCategories: () => apiFetch("/admin/categories", { schema: z.object({ items: z.array(CategoryDto) }) }),
 

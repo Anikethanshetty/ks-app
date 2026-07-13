@@ -133,12 +133,31 @@
       "emptyCart": "आपकी कार्ट खाली है।"
     },
     "orders": {
+      "title": "मेरे ऑर्डर",
       "placed": "ऑर्डर हो गया!",
       "continueShopping": "खरीदारी जारी रखें",
       "status": "स्थिति",
+      "orderNumber": "ऑर्डर #{{number}}",
       "loading": "ऑर्डर लोड हो रहा है…",
+      "loadingList": "ऑर्डर लोड हो रहे हैं…",
       "error": "ऑर्डर लोड नहीं किया जा सका।",
-      "noOrders": "अभी तक कोई ऑर्डर नहीं।"
+      "noOrders": "अभी तक कोई ऑर्डर नहीं।",
+      "empty": "आपने अभी तक कोई ऑर्डर नहीं किया है।",
+      "emptyCTA": "उत्पाद ब्राउज़ करें",
+      "placedAt": "{{date}} को ऑर्डर किया गया",
+      "timeline": "ऑर्डर टाइमलाइन",
+      "statusPlaced": "ऑर्डर किया गया",
+      "statusPaymentPendingVerification": "भुगतान लंबित",
+      "statusPaymentFailed": "भुगतान विफल",
+      "statusConfirmed": "पुष्टि हुई",
+      "statusPacked": "पैक किया गया",
+      "statusOutForDelivery": "डिलीवरी के लिए निकला",
+      "statusDelivered": "डिलीवर किया गया",
+      "statusCancelled": "रद्द किया गया",
+      "statusReturned": "वापस किया गया",
+      "cancelReason": "कारण: {{reason}}",
+      "total": "कुल",
+      "myOrders": "मेरे ऑर्डर"
     }
   },
   "common": {
@@ -148,7 +167,12 @@
     "loading": "लोड हो रहा है…",
     "edit": "संपादित करें",
     "cancel": "रद्द करें",
-    "delete": "हटाएँ"
+    "delete": "हटाएँ",
+    "close": "बंद करें",
+    "view": "देखें",
+    "confirm": "पुष्टि करें",
+    "pack": "पैक करें",
+    "deliver": "डिलीवर किया गया मार्क करें"
   },
   "admin": {
     "inventory": {
@@ -247,6 +271,39 @@
       "error": "CSV पार्स नहीं किया जा सका।",
       "empty": "ऊपर CSV डेटा पेस्ट करें और परिणाम देखने के लिए पूर्वावलोकन टैप करें।",
       "parseError": "CSV पार्सिंग विफल रही। फ़ॉर्मैट जाँचें और पुनः प्रयास करें।"
+    },
+    "orders": {
+      "title": "ऑर्डर",
+      "tabNew": "नया",
+      "tabConfirmed": "पुष्टि हुई",
+      "tabPacked": "पैक किया गया",
+      "tabDelivering": "डिलीवरी के लिए निकला",
+      "tabDelivered": "डिलीवर किया गया",
+      "tabCancelled": "रद्द किया गया",
+      "tabPendingPayment": "भुगतान लंबित",
+      "allOrders": "सभी ऑर्डर",
+      "orderNumber": "#{{number}}",
+      "customer": "ग्राहक",
+      "items": "आइटम",
+      "totalAmount": "₹{{amount}}",
+      "placedAt": "{{date}}",
+      "loading": "ऑर्डर लोड हो रहे हैं…",
+      "empty": "इस टैब में कोई ऑर्डर नहीं।",
+      "error": "ऑर्डर लोड नहीं किए जा सके।",
+      "confirmOrder": "पुष्टि करें",
+      "packOrder": "पैक करें",
+      "markOutForDelivery": "डिलीवरी के लिए मार्क करें",
+      "markDelivered": "डिलीवर किया गया मार्क करें",
+      "cancelOrder": "ऑर्डर रद्द करें",
+      "cancelNote": "रद्द करने का कारण",
+      "cancelConfirm": "ऑर्डर रद्द करें",
+      "actionSuccess": "स्थिति अपडेट हो गई।",
+      "actionError": "स्थिति अपडेट नहीं की जा सकी।",
+      "detail": "ऑर्डर विवरण",
+      "orderStatus": "स्थिति: {{status}}",
+      "customerInfo": "ग्राहक",
+      "paymentMethod": "भुगतान",
+      "deliveryAddress": "डिलीवरी पता"
     }
   }
 }

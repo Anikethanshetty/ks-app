@@ -5,6 +5,7 @@ import {
   OrderDto,
   OrderPreviewDto,
   OrderSummaryDto,
+  OrderStatus,
   PlaceOrderInput,
   ShopSettingsDto,
   UpdateStatusBody,
@@ -18,8 +19,14 @@ import { authorize } from "../middleware/authorize.js";
 import { orderRepository } from "../repositories/order.repository.js";
 import { orderService } from "../services/order.service.js";
 import { prisma } from "../lib/prisma.js";
+import type { Prisma } from "@prisma/client";
 
 const IdParam = z.object({ id: z.string().uuid() });
+const StatusListQuery = z.object({
+  status: OrderStatus.optional(),
+  cursor: z.string().uuid().optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+});
 const ListQuery = z.object({
   cursor: z.string().uuid().optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
@@ -217,6 +224,83 @@ export const orderRoutes: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (req) => orderService.cancel(req.actor!, req.params.id, req.body.reason),
+  );
+
+  // ── Admin order board (T2.5, A01): list all orders, optionally filtered by status ──
+  // Must come before /orders/:id so the static path matches first.
+  app.get(
+    "/admin/orders",
+    {
+      preHandler: authorize("admin"),
+      schema: {
+        tags: ["admin"],
+        summary: "Admin order board — list all orders, optionally filtered by status",
+        querystring: StatusListQuery,
+        response: { 200: paginated(OrderSummaryDto) },
+      },
+    },
+    async (req) => {
+      const where: Prisma.OrderWhereInput = {};
+      if (req.query.status) where.status = req.query.status;
+      const limit = req.query.limit;
+      const rows = await prisma.order.findMany({
+        where,
+        include: {
+          items: true,
+          statusEvents: { orderBy: { createdAt: "asc" } },
+          user: { select: { fullName: true, phone: true } },
+        },
+        orderBy: { placedAt: "desc" },
+        take: limit + 1,
+        ...(req.query.cursor ? { cursor: { id: req.query.cursor }, skip: 1 } : {}),
+      });
+      const hasMore = rows.length > limit;
+      const items = hasMore ? rows.slice(0, limit) : rows;
+      return {
+        items: items.map(toOrderSummaryDto),
+        nextCursor: hasMore ? (items[items.length - 1]?.id ?? null) : null,
+      };
+    },
+  );
+
+  // ── Admin order counts (T2.5): count of orders by status for tab badges ──
+  app.get(
+    "/admin/orders/counts",
+    {
+      preHandler: authorize("admin"),
+      schema: {
+        tags: ["admin"],
+        summary: "Admin order counts by status",
+        response: {
+          200: z.object({
+            placed: z.number().int().nonnegative(),
+            confirmed: z.number().int().nonnegative(),
+            packed: z.number().int().nonnegative(),
+            outForDelivery: z.number().int().nonnegative(),
+            delivered: z.number().int().nonnegative(),
+            cancelled: z.number().int().nonnegative(),
+            paymentPendingVerification: z.number().int().nonnegative(),
+          }),
+        },
+      },
+    },
+    async () => {
+      const rows = await prisma.order.groupBy({
+        by: ["status"],
+        _count: true,
+      });
+      const counts: Record<string, number> = {};
+      for (const r of rows) counts[r.status] = r._count;
+      return {
+        placed: counts.placed ?? 0,
+        confirmed: counts.confirmed ?? 0,
+        packed: counts.packed ?? 0,
+        outForDelivery: counts.out_for_delivery ?? 0,
+        delivered: counts.delivered ?? 0,
+        cancelled: counts.cancelled ?? 0,
+        paymentPendingVerification: counts.payment_pending_verification ?? 0,
+      };
+    },
   );
 
   app.patch(

@@ -72,6 +72,11 @@ export default function CustomerHome() {
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
+          <Link href="/customer/orders" asChild>
+            <Pressable className="active:opacity-70">
+              <Text className="text-2xl">📋</Text>
+            </Pressable>
+          </Link>
           <Link href="/customer/cart" asChild>
             <Pressable className="relative">
               <Text className="text-2xl">🛒</Text>
