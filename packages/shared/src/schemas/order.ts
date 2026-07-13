@@ -80,3 +80,31 @@ export const CancelOrderBody = z.object({
   reason: z.string().max(500).optional(),
 });
 export type CancelOrderBody = z.infer<typeof CancelOrderBody>;
+
+// ── Payment (Phase 3) ──
+
+export const PaymentDto = z.object({
+  id: z.string().uuid(),
+  orderId: z.string().uuid(),
+  method: z.enum(["upi", "cod"]),
+  amountPaise: z.number().int().nonnegative(),
+  status: z.enum(["pending_verification", "verified", "rejected", "collected", "refunded"]),
+  upiReference: z.string().nullable(),
+  proofImageUrl: z.string().nullable(),
+  submittedAt: z.string().nullable(),
+  verifiedAt: z.string().nullable(),
+  rejectionReason: z.string().nullable(),
+});
+export type PaymentDto = z.infer<typeof PaymentDto>;
+
+export const SubmitPaymentBody = z.object({
+  upiReference: z.string().regex(/^[A-Za-z0-9]{6,18}$/, "UTR must be 6-18 alphanumeric characters"),
+  proofImageUrl: z.string().url().optional(),
+});
+export type SubmitPaymentBody = z.infer<typeof SubmitPaymentBody>;
+
+export const VerifyPaymentBody = z.object({
+  action: z.enum(["verify", "reject"]),
+  rejectionReason: z.string().max(500).optional(),
+});
+export type VerifyPaymentBody = z.infer<typeof VerifyPaymentBody>;

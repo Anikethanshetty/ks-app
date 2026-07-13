@@ -1,5 +1,5 @@
-import type { User } from "@prisma/client";
-import type { InventoryVariantDto, OrderDto, OrderSummaryDto, PublicUser } from "@kss/shared";
+import type { User, Payment } from "@prisma/client";
+import type { InventoryVariantDto, OrderDto, OrderSummaryDto, PaymentDto, PublicUser } from "@kss/shared";
 import { toPaise } from "./money.js";
 import type { OrderWithItems } from "../repositories/order.repository.js";
 import type { InventoryRow } from "../repositories/inventory.repository.js";
@@ -55,6 +55,22 @@ export function toOrderDto(o: OrderWithItems): OrderDto {
 export function toOrderSummaryDto(o: OrderWithItems): OrderSummaryDto {
   const { items: _items, addressSnapshot: _addr, statusEvents: _events, ...rest } = toOrderDto(o);
   return rest as OrderSummaryDto;
+}
+
+/** Payment → DTO. */
+export function toPaymentDto(p: Payment): PaymentDto {
+  return {
+    id: p.id,
+    orderId: p.orderId,
+    method: p.method,
+    amountPaise: toPaise(p.amount),
+    status: p.status,
+    upiReference: p.upiReference,
+    proofImageUrl: p.proofImageUrl,
+    submittedAt: p.submittedAt?.toISOString() ?? null,
+    verifiedAt: p.verifiedAt?.toISOString() ?? null,
+    rejectionReason: p.rejectionReason,
+  };
 }
 
 /** Raw-SQL inventory row → DTO. Stock buckets are computed here, not stored. */

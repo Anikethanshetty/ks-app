@@ -26,6 +26,7 @@ import { catalogueRoutes } from "./routes/catalogue.routes.js";
 import { cartRoutes } from "./routes/cart.routes.js";
 import { addressRoutes } from "./routes/address.routes.js";
 import { deviceTokenRoutes } from "./routes/device-token.routes.js";
+import { paymentRoutes } from "./routes/payment.routes.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -83,6 +84,7 @@ export async function buildServer() {
       await v1.register(cartRoutes);
       await v1.register(addressRoutes);
       await v1.register(deviceTokenRoutes);
+      await v1.register(paymentRoutes);
     },
     { prefix: "/api/v1" },
   );

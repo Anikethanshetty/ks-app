@@ -82,5 +82,22 @@ export const ShopSettingsDto = z.object({
   acceptingOrders: z.boolean(),
   upiVpa: z.string().nullable(),
   upiPayeeName: z.string().nullable(),
+  upiQrUrl: z.string().nullable(),
 });
 export type ShopSettingsDto = z.infer<typeof ShopSettingsDto>;
+
+/** Admin can update shop settings. */
+export const UpdateShopSettingsBody = z.object({
+  shopName: z.string().min(1).max(100).optional(),
+  shopPhone: z.string().optional(),
+  deliveryFeePaise: z.number().int().nonnegative().optional(),
+  freeDeliveryAbovePaise: z.number().int().nonnegative().optional(),
+  deliveryRadiusKm: z.number().positive().optional(),
+  codLimitPaise: z.number().int().nonnegative().optional(),
+  isOpen: z.boolean().optional(),
+  acceptingOrders: z.boolean().optional(),
+  upiVpa: z.string().nullable().optional(),
+  upiPayeeName: z.string().nullable().optional(),
+  upiQrUrl: z.string().nullable().optional(),
+});
+export type UpdateShopSettingsBody = z.infer<typeof UpdateShopSettingsBody>;

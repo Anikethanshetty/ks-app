@@ -249,6 +249,46 @@ export const adminOrderApi = {
     }),
 };
 
+/** Payment endpoints (Phase 3). */
+export const paymentApi = {
+  submit: (orderId: string, body: { upiReference: string; proofImageUrl?: string }) =>
+    apiFetch(`/orders/${orderId}/submit-payment`, {
+      method: "POST",
+      body,
+      schema: z.object({
+        id: z.string(),
+        orderId: z.string(),
+        method: z.string(),
+        amountPaise: z.number(),
+        status: z.string(),
+        upiReference: z.string().nullable(),
+        submittedAt: z.string().nullable(),
+      }),
+    }),
+
+  listPending: (cursor?: string) =>
+    apiFetch(`/admin/payments${cursor ? `?cursor=${cursor}` : ""}`, {
+      schema: z.object({ items: z.array(z.any()), nextCursor: z.string().nullable() }),
+    }),
+
+  verify: (paymentId: string, action: "verify" | "reject", rejectionReason?: string) =>
+    apiFetch(`/admin/payments/${paymentId}/verify`, {
+      method: "POST",
+      body: { action, rejectionReason },
+      schema: z.object({
+        id: z.string(),
+        status: z.string(),
+      }),
+    }),
+
+  updateSettings: (body: Record<string, unknown>) =>
+    apiFetch("/admin/shop-settings", {
+      method: "PATCH",
+      body,
+      schema: z.object({ ok: z.literal(true) }),
+    }),
+};
+
 export const productApi = {
   listCategories: () => apiFetch("/admin/categories", { schema: z.object({ items: z.array(CategoryDto) }) }),
 

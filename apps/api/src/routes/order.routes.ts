@@ -77,6 +77,7 @@ export const orderRoutes: FastifyPluginAsyncZod = async (app) => {
         acceptingOrders: s.acceptingOrders,
         upiVpa: s.upiVpa,
         upiPayeeName: s.upiPayeeName,
+        upiQrUrl: s.upiQrUrl,
       };
     },
   );
